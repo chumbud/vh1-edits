@@ -1,0 +1,63 @@
+.navbar, .navbar-inner .container #nav-top .nav-collapse .nav { background-color: #232323; }
+
+#content { padding-top: 30px; }
+
+.item:hover .meta-wrap .header, .item:hover .meta-wrap .sub-header { color: #00bbef; }
+
+.show-header { max-height: 435px; margin-bottom: 10px; background-color: #333; color: white;}
+.label {background-color:black; padding-bottom:10px; vertical-align:middle; margin-top:50px;}
+.item .meta-wrap .label.highlight { background-color: #48C0DD; font-weight: 400; padding: 0.35rem 0.7rem 0;}
+.show-title {font-size:2em; font-weight:800; margin-bottom:50px; margin-top:-5px;}
+
+.section-header-1 { color: #e62970; }
+
+/*//pj// changes:
+-text-transform on show titles(.item) and promos(#schedule-promo)
+-[under 659px] added space inbetween show title and preview image(.item .metawrap)
+*/
+.item, #popular-shows .ad-container { margin-bottom: 50px; text-transform: capitalize; }
+
+/*added to fix chevron overflow*/
+.btn.btn-primary.btn-cta {
+	white-space: nowrap;
+}
+
+#schedule-promo { background-color: #333; padding: 15px 0 40px; margin-bottom: 30px; text-transform: capitalize}
+#schedule-promo .show-tunein-info { margin-top: 6px; color: white; }
+#schedule-promo .show-tunein-info span { display: table-cell; }
+#schedule-promo .show-tunein-info span:first-child { padding-right: 7px; }
+#schedule-promo .label {padding: 0 0.7rem; padding-bottom: 0; height: 2.5rem; margin-top: 0;}
+#schedule-promo .call-to-action .btn { float: right; }
+
+
+@media (max-width: 979px) {
+	.item, #popular-shows .ad-container { margin-bottom: 30px; }
+	#popular-shows .ad-container { float: right; }
+	#schedule-promo .call-to-action .btn { float: left; }
+	#schedule-promo { background-color: #333; padding: 15px 0; margin-bottom: 30px;}
+	#schedule-promo [class*="col-"] { margin-bottom: 10px; }
+	#schedule-promo .col-lg-12 { margin-bottom: 10px;}
+	#schedule-promo [class*="col-"]:last-child { margin-top: 10px;}
+
+}
+@media (max-width: 659px) {
+	.ad-container {float: left; width: 100%;}
+	.item .meta-wrap .label { margin-top: 0; position: relative; }
+	.item.video-block.full-ep .media { background-color: #f2f2f2; padding-left: 0; }
+	.date-today { margin: 10px 0 20px; }
+
+	#schedule-promo [class*="col-"] {
+		font-size: 1.8rem;
+		line-height: 1.05;
+	}
+	#schedule-promo .call-to-action .btn.btn-cta > span { font-size: 1.8rem; }
+	#schedule-promo .label { padding: 0.35rem 0.7rem; }
+	.item .meta-wrap { padding-top: 0; margin-top: 8px; }
+	.item .meta-wrap .label.highlight {
+		font-size: 1.4rem;
+		font-weight: 400;
+		height: 2.1rem;
+		margin-bottom: 0.4em;
+		padding: 0.2rem 0.7rem 0;
+	}
+}

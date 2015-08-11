@@ -1,0 +1,246 @@
+
+/* v1.js */
+/* 
+	@name: ENT_TFV300
+	@functional: http://confluence.mtvi.com/display/ENT/ENT_TFV300
+	@styleguide: http://confluence.mtvi.com/display/ENT/Javascript+Style+Guide
+	@author: $Author: fedarovs $
+*/
+
+$Crabapple.TriforceView_ent_tfv300_v1 = function() {};
+$Crabapple.extend($Crabapple.TriforceView, $Crabapple.TriforceView_ent_tfv300_v1, {
+	coreElement: null,
+
+	/**
+	 * Generates core element
+	 */
+	generateCoreElement: function(trackingClass) {
+		if (!trackingClass && this.options && this.options.trackingClass) {
+			trackingClass = this.options.trackingClass;
+		}
+
+		this.coreElement = this.getModuleWrapper(this.moduleElement, trackingClass);
+	},
+
+	/**
+	 * Enhances the view(in that case just sets coreElement)
+	 * @param coreElement
+	 */
+	enhance: function (coreElement) {
+		this.coreElement = coreElement;
+	},
+
+	/**
+	 * Sets output(core element) to the page
+	 * Depending on the 'mode' it replaces the module element with core element or just does 'append'.
+	 */
+	setOutput: function() {
+		if (this.mode !== 'append') {
+			this.moduleElement = this.replaceModuleElement(this.moduleElement, this.coreElement);
+		} else {
+			this.moduleElement.append(this.coreElement);
+		}
+
+		return this.moduleElement.show();
+	}
+});
+/* v1.js */
+/*
+ @name: ENT_TFV311 - Navigation list(link opens in new window)
+ @functional: http://confluence.mtvi.com/pages/viewpage.action?pageId=283349493
+ @styleguide: http://confluence.mtvi.com/display/ENT/Javascript+Style+Guide
+ @author: $Author: fedarovs $
+ */
+
+$Crabapple.TriforceView_ent_tfv311_v1 = function() {};
+$Crabapple.extend($Crabapple.TriforceView, $Crabapple.TriforceView_ent_tfv311_v1, {
+	coreElement: null,
+
+	/**
+	 * Renders the necessary HTML
+	 */
+	render: function (coreElement, data) {
+		this.coreElement = coreElement;
+		this.generateNavList(data);
+	},
+
+	/**
+	 * Generates navigation list
+	 */
+	generateNavList: function(data) {
+		var navList = this.appendDom(this.coreElement, 'ul', {
+				class: 'list'
+			});
+
+		this.appendNavItems(data.entries, navList);
+	},
+
+	/**
+	 * Goes through all passed items and appends them
+	 */
+	appendNavItems: function (items, navList) {
+		for (var i = 0, len = items.length; i < len; i++) {
+			this.appendNavItem(items[i], navList);
+		}
+	},
+
+	/**
+	 * Appends nav item
+	 */
+	appendNavItem: function (item, navList) {
+		var listItem = this.appendDom(navList, 'li', {
+				class: 'list_item'
+			});
+
+		this.appendDom(listItem, 'a', {
+			href: item.url,
+			title: item.title,
+			class: 'notriforce ' + item.title.toLowerCase().replace(/\W/g, '_'),
+			target: '_blank'
+		}).text(item.title);
+	}
+});
+/* v1.js */
+/*
+ @name: ENT_TFV312 - Copyright text with logo
+ @functional: http://confluence.mtvi.com/display/ENT/ENT_TFV312+-+Copyright+text+with+logo
+ @styleguide: http://confluence.mtvi.com/display/ENT/Javascript+Style+Guide
+ @author: $Author: fedarovs $
+ */
+
+$Crabapple.TriforceView_ent_tfv312_v1 = function() {};
+$Crabapple.extend($Crabapple.TriforceView, $Crabapple.TriforceView_ent_tfv312_v1, {
+	coreElement: null,
+
+	/**
+	 * Renders the necessary HTML
+	 */
+	render: function (coreElement, data) {
+		this.coreElement = coreElement;
+		this.generateLogo();
+		this.generateCopyright(data);
+	},
+
+	/**
+	 * Generates logo holder
+	 */
+	generateLogo: function() {
+		this.appendDom(this.coreElement, 'div', {
+			class: 'logo'
+		});
+	},
+
+	/**
+	 * Generate copyright text
+	 */
+	generateCopyright: function (data) {
+		this.appendDom(this.coreElement, 'p', {
+			class: 'copyright'
+		}).html(data.copyright);
+	}
+});
+/* Controller.js */
+/*
+ @name: ENT_M006 - Comedy Footer
+ @functional: http://confluence.mtvi.com/display/ENT/ENT_M006+-+Comedy+Footer
+ @styleguide: http://confluence.mtvi.com/display/ENT/Javascript+Style+Guide
+ @author: $Author: fedarovs $
+ */
+
+
+$Crabapple.TriforceModule_ent_m006_v2 = function() {};
+$Crabapple.extend($Crabapple.TriforceModule, $Crabapple.TriforceModule_ent_m006_v2, {
+	viewName: '$Crabapple.TriforceView_ent_tfv300_v1',
+
+	viewNames: {
+		listOfLinks: '$Crabapple.TriforceView_ent_tfv311_v1',
+		sitesCopy: '$Crabapple.TriforceView_ent_tfv312_v1'
+	},
+
+	initializeView: function() {
+		var feed = this.feedResponse.result;
+
+		this.view.generateCoreElement();
+
+		if (feed.navs) {
+			for (var i = 0, len = feed.navs.length; i < len; i++) {
+				this.views.listOfLinks.render(this.view.coreElement, feed.navs[i]);
+			}
+		}
+
+		this.views.sitesCopy.render(this.view.coreElement, {
+			copyright: this.getCopyright(feed)
+		});
+
+		this.moduleElement = this.view.setOutput();
+
+		this.backgroundHolder = $('#background_holder');
+		this.updateHolderPadding();
+	},
+
+	enhanceModule: function() {
+		this.backgroundHolder = $('#background_holder');
+		this.addEvents();
+	},
+
+	getCopyright: function (feed) {
+		var defaultCopy = '&copy; {CURRENT_YEAR} Copyright  Comedy Partners. All Rights Reserved. '
+				+ 'Comedy Central and all related titles, logos and characters are trademarks of comedy partners.',
+			copyright;
+
+		copyright = (feed.promo && feed.promo.copy) ? feed.promo.copy : defaultCopy;
+
+		return copyright.replace('{CURRENT_YEAR}', new Date().getFullYear());
+
+	},
+
+	addEvents: function() {
+		var self = this,
+			timeoutId;
+
+		$(window).on('resize', function() {
+			clearTimeout(timeoutId);
+
+			timeoutId = setTimeout(function() {
+				self.updateHolderPadding();
+			}, 500);
+		});
+		this.updateHolderPadding();
+	},
+
+	updateHolderPadding: function() {
+		this.backgroundHolder.css({paddingBottom: this.moduleElement.outerHeight()})
+	}
+});
+/* Controller.js */
+/*
+ @name: ENT_M006_MTV - MTV Footer
+ @functional:
+ @styleguide:
+ @author: $Author: salernoe $
+ */
+
+
+$Crabapple.TriforceModule_ent_m006_mtv_V1_0_0 = function() {};
+$Crabapple.extend($Crabapple.TriforceModule_ent_m006_v2, $Crabapple.TriforceModule_ent_m006_mtv_V1_0_0, {
+
+    applyCustomColor: function() {
+        var customColors = window.$MTV.triforce.colorPicker();
+
+        if (customColors.darkTheme) {
+            var moduleName = this.feedResponse.result.promo.promoType.toLowerCase();
+            var styleElement = document.getElementById(moduleName +'_colorsPallete') || document.createElement('style');
+            styleElement.id = moduleName + '_' + '_colorsPallete';
+            styleElement.innerHTML = ".ent_p016_mtv ." + moduleName + " {background-color: #232323; border-top-color: #000; color: #fff;}"
+            styleElement.innerHTML += ".ent_p016_mtv ." + moduleName + " .list li a  {color: #fff;}";
+            document.head.appendChild(styleElement);
+        }
+    },
+    addEvents: function() {
+        this.applyCustomColor();
+    }
+});
+
+
+
+

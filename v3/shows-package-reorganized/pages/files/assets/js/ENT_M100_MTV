@@ -1,0 +1,174 @@
+
+/* v2.js */
+/* 
+	@name: ENT_TFV300_V2
+	@functional: http://confluence.mtvi.com/display/ENT/ENT_TFV300_V2
+	@styleguide: http://confluence.mtvi.com/display/ENT/Javascript+Style+Guide
+	@author: $Author: kavaliot $
+*/
+
+$Crabapple.TriforceView_ent_tfv300_v2 = function() {};
+$Crabapple.extend($Crabapple.TriforceView, $Crabapple.TriforceView_ent_tfv300_v2, {
+	coreElement: null,
+	moduleWrapper: null,
+
+	/**
+	 * Generates core element
+	 */
+	generateCoreElement: function() {
+		this.moduleWrapper = this.getModuleWrapper(this.moduleElement); 
+
+		this.coreElement = this.appendDom(this.moduleWrapper, 'div', {
+			class: 'module_content s_container'
+		});
+	},
+
+	/**
+	 * Enhances the view(in that case just sets correct coreElement)
+	 * @param coreElement
+	 */
+	enhance: function (coreElement) {
+		this.coreElement = coreElement.find('.module_content');
+	},
+
+	/**
+	 * Sets output(core element) to the page
+	 */
+	setOutput: function() {
+		this.moduleElement = this.replaceModuleElement(this.moduleElement, this.moduleWrapper);
+
+		return this.moduleElement.show();
+	}
+});
+/* Controller.js */
+/*
+ @name: ENT_M100 - MODULE NAME
+ @functional: MODULE SPEC IN CONFLUENCE
+ @author: $Author: raabt
+ */
+
+
+
+$Crabapple.TriforceModule_ent_m100_V1_0_0 = function() {};
+$Crabapple.extend($Crabapple.TriforceModule, $Crabapple.TriforceModule_ent_m100_V1_0_0, {
+    viewName: '$Crabapple.TriforceView_ent_m100_v1',
+    initializeView: function () {
+        var feed = this.feedResponse.result;
+
+        this.view.generateCoreElement();
+        this.view.render(feed,{});
+        this.moduleElement = this.view.setOutput();
+    },
+    addEvents: function(){
+
+    },
+    generateAds: function() {
+        var _this = this,
+
+            moduleElement = this.moduleElement;
+        var childAds = moduleElement.find('ul').find('[data-adsize]');
+        if(childAds.length) {
+            for(var i = 0; i < childAds.length; i++) {
+                if(!$(childAds[i]).hasClass('hasAd')) {
+                    $(childAds[i]).addClass('hasAd');
+                    $('body').trigger('triforce:reportingLoadSingleAd', childAds[i]);
+                }
+            }
+        }
+    }
+});
+
+
+
+/* View.js */
+/*
+ View for m100 - Featured Shows line-list
+ */
+
+$Crabapple.TriforceView_ent_m100_v1 = {
+    parentView: '$Crabapple.TriforceView_ent_tfv300_v2',
+    extention: {
+        render: function (data, options) {
+            this.data = data;
+            this.options = options;
+            this.generateModuleContent();
+        },
+
+        generateModuleContent: function () {
+
+            var _this = this,
+                moduleContent = this.appendDom(this.coreElement, 'div', {'class': 'related-shows'}),
+                headline = this.appendDom(moduleContent, 'h2', {'class': 'headline'}).text(this.data.promo.headline),
+                lineList = this.appendDom(moduleContent, 'ul', {'class': 'L001_line_list'}),
+                elementsRendered = 0;
+
+            var shows = this.data.shows;
+            // loop here for shows list
+            for(var i =0; i < shows.length; i++) {
+                var liItem = this.appendDom(lineList, 'li', {'class':'S001_line_list_item'}),
+                    liAnchor = this.appendDom(liItem, 'a', {'href':shows[i].canonicalURL, 'class':'link_wrapper'}),
+                    liImg = this.appendImage(liAnchor, shows[i].images[0]);
+                    if(shows[i].tuneIn != ''){
+                        //alert('-'+shows[i].tuneIn.length+'-');
+                        aTunein = this.appendDom(liAnchor, 'h4', {'class':'s_fonts_lineListTuneIn'}).text(shows[i].tuneIn);
+                    }
+                    aTitle = this.appendDom(liAnchor, 'h3', {'class':'s_fonts_lineListHeader'}).text(shows[i].title);
+
+                elementsRendered++;
+                if(elementsRendered == 2) {
+                    this.appendDom(this.appendDom(lineList, 'li', {'class':'box_ad'}), 'div', {'class':'lineList_ad', 'data-adsize':'300x250'});
+                    //elementsRendered = 0;
+                }
+            }
+        }
+    }
+};
+/* Controller.js */
+/*
+ @name: ENT_M100 - Featured Shows Grid
+ @functional: https://confluence.mtvi.com/display/ENT/ENT_M102_MTV+-+Related+Shows+Grid
+ @styleguide: http://confluence.mtvi.com/display/ENT/Javascript+Style+Guide
+ @author: $Author: raabt
+ */
+
+
+$Crabapple.TriforceModule_ent_m100_mtv_V1_0_0 = function() {};
+$Crabapple.extend($Crabapple.TriforceModule_ent_m100_V1_0_0, $Crabapple.TriforceModule_ent_m100_mtv_V1_0_0, {
+
+});
+
+/* View.js */
+/*
+ @name: ENT_M100 - Featured Shows Grid
+ @functional: https://confluence.mtvi.com/display/ENT/ENT_M102_MTV+-+Related+Shows+Grid
+ @author: $Author: raabt
+ */
+
+$Crabapple.TriforceView_ent_m100_mtv = {
+    parentView: '$Crabapple.TriforceView_ent_tfv300_v2',
+    extention: {
+        render: function (data, options) {
+            this.data = data;
+            this.options = options;
+            this.generateModuleContent();
+        },
+
+        generateModuleContent: function () {
+
+            var _this = this,
+                moduleContent = this.appendDom(this.coreElement, 'div', {'class': 'related-shows'}),
+                headline = this.appendDom(moduleContent, 'h2', {'class': 'headline'}).text('related shows'),
+                lineList = this.appendDom(moduleContent, 'div', {'class': 'L001_line_list'});
+
+            var shows = this.data.shows;
+            // loop here for shows list
+            for(var i =0; i < shows.length; i++) {
+                var liItem = this.appendDom(lineList, 'li', {'class':'S001_line_list_item'}),
+                    liAnchor = this.appendDom(liItem, 'a', {'href':shows[i].canonicalURL, 'class':'link_wrapper'}),
+                    liImg = this.appendImage(liAnchor, shows[i].images[0]),
+                    aTitle = this.appendDom(liAnchor, 'h3', {'class':'s_fonts_lineListHeader'}).text(shows[i].title);
+            }
+
+        }
+    }
+};

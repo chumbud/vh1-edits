@@ -1,0 +1,38 @@
+.item { margin-bottom: 70px; }
+
+.item .media { position: relative; }
+.item .marker {
+	background-color: rgba(0, 0, 0, 0.3);
+	bottom: 0;
+	color: white;
+	font-size: 1em;
+	font-weight: 400;
+	line-height: 0.95;
+	position: absolute;
+	text-align: center;
+	text-shadow: 0 0 3px rgba(0, 0, 0, 1);
+	top: 0;
+	width: 100%;
+	z-index: 2;
+	display: inherit;
+}
+.item .marker [class*="icon-"] {
+	font-size: 7rem;
+}
+.item .marker > div { display: table; height: 100%; width: 100%; text-align: center;}
+.item .marker > div span { display: table-cell; height: 100%; vertical-align: middle;}
+.item .marker > div.two big { font-size: 2.2em; }
+.item .marker big { font-size: 3.8em; font-weight: 900; letter-spacing: -0.03em; }
+.item .expiration:before { content:" · "; background-color: #fafafa; color: #777; padding: 0.2rem 0.5rem 0.2rem; margin-right: 0.5rem; }
+.item .expiration { padding: 0.2rem 0.5rem 0.2rem 0; color: #1a1a1a;}
+
+@media (max-width: 659px) {
+	.item .marker { font-size: 0.8em; letter-spacing: 0.01em;}
+
+	.item .expiration:before { content:""; background-color: #fafafa; padding: 0; width: 100%; }
+	.item .expiration { display: inline-block; margin-top: 0.6em;}
+
+	.item .marker big { font-size: 1.8em; letter-spacing: 0.01em; }
+	.item .marker > div.two big { font-size: 1.5em; }
+
+}

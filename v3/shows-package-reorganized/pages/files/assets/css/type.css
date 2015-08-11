@@ -1,0 +1,286 @@
+/* IGNORE: SPECIFIC TO THIS PAGE2 ********************************/			
+/* CORE ADDITIONS */	
+/*	.container3x1 > .content img {
+		margin-top: -13%;
+	} 
+
+	.container3x1 > .content img {
+		margin-top: 0;
+		bottom: 0;
+		height: 100%;
+		width: auto;
+	}
+	.container1x1 > .content {
+		bottom: 0;
+	}
+	.container1x1 > .content img {
+		height: 100%;
+		width: auto;
+	}*/
+/* CORE RESETS */
+	.item .meta-wrap .header, 
+	.item .meta-wrap .sub-header,
+	.item .meta-wrap .sub-header a,
+	.item .meta-wrap .deck,
+	.item .meta-wrap .meta-wrap,
+	.item .meta-wrap .label  { font-size: inherit; line-height: inherit; }
+	
+	/* redefine all flag from labels markers */
+/* **************************************************************/	
+
+/* HEADER AND SUB-HEADER */
+/* This will control the size of the header and sub-header, 
+   the deck, label and meta will be a percentage based on the numbers defined here */		
+	
+/* LABELS -----------------*/
+	.item .meta-wrap .label {
+		font-size: 1.6rem;
+		padding: 0.5rem 0.7rem 0;
+		position: absolute;
+		line-height: 1.0;
+		height: 2.6rem;
+		margin-top: -3.1rem; /* = .meta-wrap { padding-top } + .label { height } */
+	}
+	
+/* HEADER */
+	.item .meta-wrap .header {
+		font-weight: 700;
+	}
+	
+/* SUB-HEADER */
+	.item .meta-wrap .sub-header {
+		font-size: 0.85em;
+		font-weight: 400;
+	}
+	
+/* DECK */
+	/*Default Values ------*/
+	.item .meta-wrap .deck {
+		font-size: 0.65em;
+		font-weight: 400;
+		letter-spacing: 0em;
+		line-height: 1.25;
+	}	
+	
+	/*Order: 1*/
+	.col-lg-12 [class*="col-"] .item .meta-wrap .deck,
+	.col-lg-11 [class*="col-"] .item .meta-wrap .deck,
+	.col-lg-10 [class*="col-"] .item .meta-wrap .deck,
+	.col-lg-9 [class*="col-"] .item .meta-wrap .deck,
+	.col-lg-8 [class*="col-"] .item .meta-wrap .deck  {
+		letter-spacing: 0;
+	}
+	
+	/*Order: 2*/
+	.col-lg-12 .item .meta-wrap .deck,
+	.col-lg-11 .item .meta-wrap .deck,
+	.col-lg-10 .item .meta-wrap .deck, .col-lg-10 .col-lg-12 .item .meta-wrap .deck,
+	.col-lg-9 .item .meta-wrap .deck, .col-lg-9 .col-lg-12 .item .meta-wrap .deck, 
+	.col-lg-8 .item .meta-wrap .deck, .col-lg-8 .col-lg-12 .item .meta-wrap .deck  {
+		letter-spacing: -0.03em;
+	}
+	
+/* META */
+	.item .meta-wrap .meta {
+		font-weight: 400;
+		letter-spacing: 0;
+		font-size: 1.4rem;
+		color: #777;
+		margin-top: 0.6em;
+	}
+
+
+/* MEASUREMENTS -----------------*/
+	.item .meta-wrap {
+		padding-top: 0.5rem;
+	}
+	.item .meta-wrap > * {
+		margin-bottom: 0.18em;
+	}
+	.item .meta-wrap .sub-header {
+		margin-top: 0.2em;
+	}
+	.item .meta-wrap .deck {
+		margin-top: 0.4em;
+	}
+	
+
+/* POSTCARD Customization ------*/	
+	.item[class*="postcard-"] .meta-wrap {
+		padding-top: 0;
+	}
+	/*.item[class*="postcard-"] .meta-wrap > * {
+		margin-bottom: 0.4em;
+	}*/
+	.item[class*="postcard-"] .meta-wrap .label {
+		position: relative;
+		font-size: 1.4rem;
+		height: 2.3rem;
+    	padding-top: 0.4rem;
+	}
+	.item[class*="postcard-"] .meta-wrap .label + * {
+		margin-top: 0.3em;
+		display: block;	
+	}	
+	
+
+
+/* FONT SIZE ------*/
+	.col-lg-2 .item, [class*="col-"] .col-lg-2 .item {
+		font-size: 1.7rem;
+		line-height: 1.05;	
+	}
+	
+	[class*="col-"] .col-lg-4 .item, .col-lg-4 .item[class*="postcard-"],
+	[class*="col-"] .col-lg-6 .item[class*="postcard-"] {
+		font-size: 2rem; /* @300px = 20px */
+		line-height: 1.13;
+	}
+				
+	.col-lg-3 .item,
+	.col-lg-6 .item[class*="postcard-"],
+	[class*="col-"] .col-lg-6 .item {
+		font-size: 2.3rem;
+		line-height: 1.1;
+	}
+	
+	.col-lg-4 .item,
+	[class*="col-"] .col-lg-5 .item {
+		font-size: 2.3rem;
+		line-height: 1.05;
+		letter-spacing: -0.025em;
+	}
+	
+	.col-lg-5 .item,
+	[class*="col-"] .col-lg-7 .item,
+	[class*="col-"] .col-lg-8 .item  {
+		font-size: 3.0rem;
+		line-height: 1.0;
+		letter-spacing: -0.02em;
+	}
+	
+	.col-lg-6 .item,
+	.col-lg-7 .item,
+	.col-lg-8 .item {
+		font-size: 3.7rem;
+		line-height: 1.1;
+	}
+	
+	.col-lg-9 .item, [class*="col-"] .col-lg-9 .item,
+	.col-lg-10 .item, [class*="col-"] .col-lg-10 .item  {
+		font-size: 4rem;
+		line-height: 1.1;
+		letter-spacing: -0.03em;
+	}
+	
+	[class*="col-"] .col-lg-11 .item,
+	[class*="col-"] .col-lg-12 .item {
+		font-size: 4.9rem;
+		line-height: 1.1;
+		letter-spacing: -0.03em;
+	}
+	
+	.col-lg-11 .item,
+	.col-lg-12 .item {
+		font-size: 5.9rem;
+		line-height: 0.95;
+		letter-spacing: -0.03em;
+	}	
+
+		
+@media ( min-width : 660px) and ( max-width : 979px){
+	.col-md-11 .item,
+	.col-md-12 .item {
+		font-size: 6.0vw;
+	}	
+
+	.col-md-6 .item {
+		font-size: 4.2vw;
+		line-height: 1;
+	}
+
+/* HP */	[class*="col-"] .col-md-12 .item {
+		font-size: 2.3rem;
+		font-size: 6.4vw;
+		line-height: 1;
+	}
+	
+/* HP */	[class*="col-"] .col-md-6 .item {
+		font-size: 2.0rem;
+		font-size: 3.3vw;
+		line-height: 1;
+	}
+	
+/* HP */	[class*="col-"] .col-md-4 .item {
+		font-size: 1.7rem;
+		font-size: 2.41vw;
+		line-height: 1.05;
+	}	
+
+/* HP */	.col-md-10 .item[class*="postcard-"] {
+		font-size: 1.7rem;
+		font-size: 3.05vw;
+		line-height: 1.05;
+	}
+	
+	
+/* POSTCARD Customization ------*/
+	.col-md-11 .item[class*="postcard-"],
+	.col-md-12 .item[class*="postcard-"] {
+		font-size: 4.01vw; /* @659px = 27px */
+	}
+
+}
+
+
+@media ( max-width : 659px) {
+	.item .meta-wrap .meta {
+		font-size: 1.2rem;
+	}
+	
+	[class*="col-lg"] .item,
+	[class*="col-md"] .item,
+	[class*="col-"] [class*="col-lg"] .item,
+	[class*="col-"] [class*="col-md"] .item,
+	.col-sm-11 .item,
+	.col-sm-12 .item {
+		font-size: 6.85vw;
+	}
+	
+	
+/* POSTCARD Customization ------*/
+	/*[class*="col-lg"] .item[class*="postcard-"],
+	[class*="col-md"] .item[class*="postcard-"],
+	.col-sm-11 .item[class*="postcard-"],
+	.col-sm-12 .item[class*="postcard-"] {
+		font-size: 6vw;
+	} */
+	
+	.col-sm-6 .item,
+	.col-sm-7 .item,
+	.col-sm-8 .item {
+		font-size: 1.7rem;
+		font-size: 5.05vw;
+		line-height: 1.05;
+	}	
+	
+/* HP */	.col-sm-12 .item[class*="postcard-"],
+	.col-sm-6 .item {
+		font-size: 1.7rem;
+		font-size: 5.05vw;
+		line-height: 1.05;
+	}
+	
+/* HP */ .btn.btn-large {
+			font-size: 2.3rem;
+			font-size: 6.9vw;
+		}
+	
+/* HP */  .btn > span, .btn-cta > span {
+			font-size: 2.0rem;
+			font-size: 6vw;
+	}
+}
+
+
+/* consider defining [class*="col-"] .item at each breakpoint as fallback */

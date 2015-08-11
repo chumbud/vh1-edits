@@ -1,0 +1,18 @@
+
+.dropdown-menu_container { margin-top: 20px; margin-bottom: 10px; display: inline-block; min-width: 180px; position: relative;}
+
+.dropdown-menu_container a {color: white; }
+
+#dropdown-menu_btn { background-color: #1a1a1a; border-radius: 3px; display: table-cell; min-height: 45px; padding: 8px 13px 11px; vertical-align: middle; font-size: 2.3rem; line-height:1.15; }
+#dropdown-menu_btn > div { float: left; display: block; width: 100%;}
+#dropdown-menu_btn div [class*="icon-"] { float: right; font-size: 0.9em; margin-top: 0.23em;}
+#dropdown-menu_btn div:last-child { font-size: 0.7em; font-weight: 200; color: #aaa; letter-spacing:0.04em;}
+
+#dropdown-menu_menu { display: none; position: absolute; z-index: 5; margin-top: -2px; width: 100%; background-color: #1a1a1a;}
+#dropdown-menu_menu ul { display: inline-block; background-color: rgba(255,255,255,0.1); width: 100%; min-width: 180px; margin-bottom: 0;}
+#dropdown-menu_menu ul li a { display: block; font-size: 2rem; font-weight: 400; line-height: 1; padding: 10px;}
+
+#dropdown-menu_menu ul li a:hover { border-left: 5px solid #00bbef; color: #00bbef; }
+/*#dropdown-menu_menu ul li a:hover div:first-child { border-left: 5px solid #00bbef; color: #00bbef; margin-left:-10px; padding-left: 10px; }*/
+
+#dropdown-menu_menu ul li small { font-size: 0.65em; color: #aaa; letter-spacing: 0.04em; font-weight: 200; }

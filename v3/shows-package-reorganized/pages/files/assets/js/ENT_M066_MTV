@@ -1,0 +1,1207 @@
+
+/* Controller.js */
+/*
+    @name: Show Header
+    @functional: http://confluence.mtvi.com/display/ENT/ENT_M070_CC+-+Show+Header
+    @styleguide: http://confluence.mtvi.com/display/ENT/Javascript+Style+Guide
+    @author: $Author: $
+*/
+
+$Crabapple.TriforceModule_ent_m070_v4_1_1 = function() {};
+$Crabapple.extend($Crabapple.TriforceModule, $Crabapple.TriforceModule_ent_m070_v4_1_1, {
+    viewName: '$Crabapple.TriforceView_ent_m070_v4_1_1',
+
+    options: {
+        cookie: 'favoriteShows',
+        favedClass: 'favorited',
+        openedMobileMenuClass: 'visible',
+        videoPlayerSelector: 'iframe#video_player',
+        isTriforce: $('body').hasClass('triforce_rendered'),
+        followedShowsUrl: '/2.0/00001/json/{community_ucid}/feeds/content/0{user_ucid}/TopShows?skipCache=true'
+    },
+    initialScrollTop: 0,
+    followedShows: null,
+
+    $body: $('body'),
+
+    initializeView: function() {        
+        var feed = this.feedResponse.result;
+        this.view.setOptions(this.options);
+        
+        this.view.getData(feed);
+        this.view.generateCoreElement();
+
+        this.moduleElement = this.view.setOutput();
+        this.configureModule();
+        this.highlightActiveElements();
+        this.applyCustomColor();
+    },
+
+    enhanceModule: function() {
+        this.configureModule();        
+        this.addEvents();
+        this.addLinkHandler();
+        this.highlightActiveElements();
+        this.initPreloader();
+        this.applyCustomColor();
+    },
+
+    applyCustomColor: function(){
+      //added to support spike color overrides.  DO NOT REMOVE!!!!
+    },
+
+    configureModule: function () {
+        $('body').addClass('show_portal');
+        
+        $('[data-widget=smallUserBar]').sm4().removeAttr('data-widget');
+        $('[data-widget=userProfile]').sm4().removeAttr('data-widget');
+
+        this.initFluxFavoriteWidget();
+        this.setBodyBackgroundColor();
+        this.moduleElement.data('tfrendered', true);
+        this.view.moduleElement.removeAttr('data-tfpriority data-tfzone data-tfdriver');
+        this.preloaderWrapper = this.view.moduleElement.find(".preload_wrapper");
+    },
+
+    initFluxFavoriteWidget: function () {
+        var _this = this;
+
+        this.followElement = $('[data-widget=headerShowFollow]').on('sm4:widget:load', function (e, widget) {
+            widget.onFollowed = function () {
+                _this.onFollowed();
+            };
+            widget.unFollowed = function () {
+                _this.unFollowed();
+            };
+        }).sm4();
+    },
+
+    listenForUserEvents: function () {
+        var _this = this;
+
+        Flux4.addEventListener('signIn', this.getFollowedShows.bind(this));
+        Flux4.addEventListener('signUp', this.getFollowedShows.bind(this));
+        Flux4.addEventListener('signOut', function (){
+            _this.followedShows = null;
+            // this.sortShows();
+        });
+    },
+
+    getFollowedShows: function () {
+        var userUcid = Flux4.getContext().user && Flux4.getContext().user.ucid,
+            _this = this,
+            url;
+
+        if (userUcid) {
+            url = config.getFluxBaseHref() + this.options.followedShowsUrl;
+            url = url.replace('{community_ucid}', config.getFluxCommunityId()).replace('{user_ucid}', userUcid);
+            $.ajax({
+                dataType: 'json',
+                url: url
+            }).done(function (data) {
+                if (!data.Items || data.Items.length === 0) {
+                    _this.followedShows = null;
+                } else {
+                    _this.followedShows = {};
+                    for (var i = 0; i < data.Items.length; i ++) {
+                        _this.followedShows[data.Items[i].Ucid] = data.Items[i].OriginalUri;
+                    }
+                }
+                // this.sortShows();
+            });
+        } else {
+            this.followedShows = null;
+            // this.sortShows();
+        }
+    },
+
+    onFollowed: function (service, ucid) {
+        var $follow = this.followElement,
+            showId = $follow.data('showid');
+
+        setTimeout(function () {
+            $follow.addClass('appear');
+        }, 10);
+        if (this.followedShows) {
+            this.followedShows[ucid] = showId;
+        }
+        setTimeout(function () {
+            $follow.removeClass('appear');
+        }, 2000);
+        // this.sortShows();
+    },
+
+    unFollowed: function (service, ucid) {
+        if (this.followedShows) {
+            delete this.followedShows[ucid];
+        }
+        // this.sortShows();
+    },
+
+    setBodyBackgroundColor: function () {
+        var $body = $('body'),
+            backgroundColor = $('#background_holder').css('background-color');
+
+        if (backgroundColor) {
+            $body.css({'background-color': backgroundColor});
+        }
+    },
+
+    sortShows: function () {
+        var favoritedShows = Triforce.getMediator().getSharedObject('favoriteShows');
+
+        if (!favoritedShows) { //we don't need sort anything
+            return;
+        }
+
+        this.sortSideNavShows(favoritedShows);
+    },
+
+    sortSideNavShows: function (favoritedShows) {
+        var favoritedElems = this.getFavoritedElements(favoritedShows, '#side_'),
+            containerElem, otherElems, sortedElems;
+
+        if (!favoritedElems.length) {
+            return;
+        }
+
+        containerElem = this.view.moduleElement.find('.side_navigation .shows ul');
+        otherElems = containerElem.find('li');
+
+        containerElem.empty();
+        sortedElems = favoritedElems.add(otherElems);
+
+        this.addElemsToSideNav(sortedElems, containerElem);
+
+    },
+
+    getFavoritedElements: function (favoritedShows, idPattern) {
+        var favoritedElems = $();
+
+        for (var showId in favoritedShows) {
+            if (favoritedShows.hasOwnProperty(showId)) {
+                favoritedElems = favoritedElems.add($(idPattern + showId).remove());
+            }
+        }
+
+        favoritedElems.addClass('top_rated').attr('data-graphics', 'K');
+
+        return favoritedElems;
+
+    },
+
+    addElemsToSideNav: function (sortedElems, containerElem) {
+        this.addElemsToColumn(sortedElems, sortedElems.length, containerElem);
+    },
+
+    addElemsToColumn: function (elemsSet, itemsInColumn, column) {
+        if (elemsSet.length > itemsInColumn) {
+            column.append(elemsSet.slice(0, itemsInColumn));
+            return elemsSet.slice(itemsInColumn, elemsSet.length);
+        } else {
+            column.append(elemsSet);
+            return false;
+        }
+    },
+
+    isDesktop: function ($page) {
+        var $page = (typeof $page !== 'undefined' && $page.length) ? $page : $('body');
+
+        return $page.width() >= 1185; //desktop screen
+
+    },
+
+    initPreloader: function() {
+        if (typeof Spinner === "function") {
+            this.spinner = new Spinner({
+                lines: 12,
+                length: 4,
+                width: 3,
+                radius: 8,
+                color: '#D1D1D1'
+            }).spin(this.preloaderWrapper.get(0));
+        }
+    },
+
+    addEvents: function() {
+        var _this = this,
+            checkHeaderPositionTimeout,
+            initialScroll;
+
+        $('.search_input').val('');
+        $('.search_btn').removeClass('active');
+
+        $("body").click(function(){
+            $('.show_menu.active').removeClass('active');
+        });
+
+        window.Triforce.getMediator().on('triforce:pageready', function() {
+             $('.show_menu_wrapper').removeClass('active');
+            _this.highlightActiveElements();
+        });
+
+        $(window).on('scroll', function() {
+            if (checkHeaderPositionTimeout) {
+                clearTimeout(checkHeaderPositionTimeout);
+                initialScroll = $(window).scrollTop();
+            }
+            checkHeaderPositionTimeout = setTimeout(function () {
+                if ($(window).innerWidth() >= 768) {
+                    _this.moduleElement.find('.show_menu_wrapper').removeClass('active');
+                }
+                if (_this.moduleElement[0].getBoundingClientRect().top < -3  ) {
+                    if(!_this.moduleElement.hasClass('sticky_header')){
+                        if(!$(".search_input").is(":focus")) {
+                            $('.search_wrapper').removeClass('opened');
+                        } else {
+                            $('.search_input').blur();
+                        }
+                    }
+                    _this.moduleElement.addClass('sticky_header');
+                    _this.moduleElement.removeClass('un_sticky_header');
+                } else {
+                    _this.moduleElement.removeClass('sticky_header');
+                    _this.moduleElement.addClass('un_sticky_header'); 
+                    if(!$(".search_input").is(":focus")){
+                        $('.search_wrapper').removeClass('opened');
+                    }         
+                }
+            }, 5);
+            if(window.Triforce.getMediator().isIPad() && _this.moduleElement.hasClass('sticky_header') && $(".search_input").is(":focus")) {
+                $('.top_outer').css('top', $(window).scrollTop() - _this.initialScrollTop);
+            }
+        });
+
+        this.moduleElement.on('click', '.hamburger', function () {
+            _this.$body.css('top', -1 * $(window).scrollTop()).addClass('slide_opened');
+            $('.show_menu_wrapper').removeClass('active');
+            $('.search_wrapper').removeClass('opened');
+        }).on('click', '.site_logo, .full_logo_wrapper', function () {
+            window.location.href = _this.options.siteBaseHref;
+        }).on('click', '.page_overlay', function () {
+            var scrollTopPoint = -1 * parseInt(_this.$body.css('top'));
+
+            _this.$body.removeClass('slide_opened').css('top', '');
+            $(window).scrollTop(scrollTopPoint);
+
+            _this.closeSearch();
+        }).on('click', '.has_arrow', function (event) {
+            if( $(this).parents('.side_navigation').length > 0 ||  $(this).hasClass('notriforce')) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                _this.moduleElement.find('.side_navigation > li > .selected').not(this).removeClass('selected');
+                $(this).toggleClass('selected');
+            }
+        }).on('submit', 'form', function (event) {
+
+            event.preventDefault();
+            var keywords = this.elements.searchKeywords.value;
+            if(!$('body').hasClass('slide_opened') && $('.search_wrapper .search_input').is(':hidden')){
+                $('.search_input').val('');
+                $(this).parents('.search_wrapper').addClass('opened');
+                $('.show_menu_wrapper').removeClass('active');
+
+            }else if (keywords && keywords !== _this.options.searchPlaceholder) {
+                if(window.Triforce.getMediator().isMobile()){
+                    $('body').removeClass('slide_opened');
+                    $('.search_wrapper').removeClass('opened');
+                }else{
+                    if($('.search_btn').hasClass('active')){
+                        $('.search_btn').removeClass('active').addClass('inactive');
+                    } else {
+                        $('.search_btn').addClass('active').removeClass('inactive');
+                    }
+                    $('.preload_wrapper').toggleClass('active');
+                }
+                
+                window.location.href = this.getAttribute('action')+'?keywords=' + keywords;
+            }else {
+                alert('Please enter a search term.');
+            }
+
+        }).on('click', '.hide_search', function(event) {
+             $('.search_wrapper').removeClass('opened');
+             $('.search_input').val('');
+
+            _this.closeSearch();
+
+        }).on('click', '.show_menu_btn', function(event) {
+            event.stopPropagation();
+            $(this).parent().toggleClass('active');
+
+        }).on('click', 'a', function () {
+            // higlight selected nav item
+            _this.highlightActiveElements();
+
+            var $this = $(this);
+
+            // We need to close the side menu, when new page starts loading
+            if (!$this.hasClass('has_arrow') && $this.closest('.slide_menu').length) {
+                $('body').removeClass('slide_opened');
+            }
+        }).on('mouseover', '.main_nav > li', function (event) {
+            if($(this).find('.menu_dropdown').length ){
+                window.Triforce.getMediator().trigger('triforce:pageintouch');
+            }
+        }).on('focus','.search_input', function() {
+            if (window.Triforce.getMediator().isIPad()) {
+                setTimeout(function() {
+                    _this.initialScrollTop = initialScroll;
+                    $('.top_outer').css('top', $(window).scrollTop() - initialScroll);
+                },6);
+            }
+        }).on('blur','.search_input', function() {
+                if (window.Triforce.getMediator().isIPad()) {
+                    $('.top_outer').css('top', 0);
+                }
+        }).on('mouseover', '.follow_widget', function() {
+			var $this = $(this);
+
+			if(!window.Triforce.getMediator().isMobile()) {
+				$this.find('.has_icon').addClass('hover');
+			}
+		}).on('mouseleave', '.follow_widget', function() {
+			var $this = $(this);
+
+			if(!window.Triforce.getMediator().isMobile()) {
+				$this.find('.has_icon').removeClass('hover');
+			}
+		});
+
+        /* TOSH EVENTS */
+        $('.submit_a_photo').addClass('notriforce').click(function (event) {
+            event.preventDefault();
+
+            try {
+                $Crabapple.FluxWidget.userProfile.upload_photo(event);
+            } catch (e) {
+                console.log(e.stack);
+                window.Triforce.getMediator().message({
+                    'type': 'error',
+                    'message': 'Something is going wrong with Flux UserProfile widget',
+                    'exception': e
+                });
+            }
+        });
+        $('.submit_a_video').addClass('notriforce').click(function (event) {
+            event.preventDefault();
+
+            try {
+                $Crabapple.FluxWidget.userProfile.upload_video(event);
+            } catch (e) {
+                window.Triforce.getMediator().message({
+                    'type': 'error',
+                    'message': 'Something is going wrong with Flux UserProfile widget',
+                    'exception': e
+                });
+            }
+        });
+    },
+
+    closeSearch: function(){
+        if($('.search_btn').hasClass('active')){
+            $('.search_btn').removeClass('active').addClass('inactive');
+        }
+    },
+
+    highlightActiveElements: function() {
+        var url = window.location.href,
+            path = window.location.pathname;
+
+        var headerLinks = $('.show_menu li a, .main_nav li a');
+
+        headerLinks.each(function(){
+            $(this).parent().removeClass('active');
+        });
+
+        for(var i =0; i < headerLinks.length; i++) {
+            var link = $(headerLinks[i]),
+                href = link.attr('href');
+
+            if (href == path || this.checkLinkContext(path, href)) {
+                link.parent().addClass('active');
+
+                if(link.hasClass('full_episodes')) {
+                    this.highlightActiveEpisode(path);
+                }
+                return;
+            }
+
+        }
+
+
+    },
+
+    checkLinkContext: function(path, href) {
+        // These keys determine which pages correspond to which header entry
+        var contextValues = [
+            'tv-schedule',
+            'episode',
+            'video-',
+            'guests',
+            'articles',
+            'photo',
+            'bios',
+            'contributors',
+            'auction'
+        ];
+
+        for(var i=0; i < contextValues.length; i++) {
+            if(path.indexOf(contextValues[i]) >= 0 && href.indexOf(contextValues[i]) >= 0) {
+                return true;
+            }
+        }
+
+        return false;
+    },
+
+    highlightActiveEpisode: function (path) {
+        var navs = this.feedResponse.result && this.feedResponse.result.siteNavigation,
+            fullEps, title, episodeLinks;
+
+        if (!navs) {
+            return;
+        }
+
+        for (var i = 0; i < navs.length; i ++) {
+            if (navs[i].title.toLowerCase().indexOf('episodes') !== -1) {
+                fullEps = navs[i].entries;
+                break;
+            }
+        }
+
+        for (i = 0; i < fullEps.length; i ++) {
+            title = fullEps[i].title.toLowerCase().replace(/[^\w]/g, '-');
+            if (path.indexOf(title) !== -1) {
+                episodeLinks = this.view.moduleElement.find('.side_navigation .full_episodes li a');
+                if (episodeLinks[i] && episodeLinks[i].className) {
+                    episodeLinks[i].className = episodeLinks[i].className + ' highlighted';
+                }
+                break;
+            }
+        }
+
+    }
+
+});
+/* View.js */
+$Crabapple.TriforceView_ent_m070_v4_1_1 = function() {};
+$Crabapple.extend($Crabapple.TriforceView, $Crabapple.TriforceView_ent_m070_v4_1_1, {
+
+	defaultOptions: {
+        sideNavMaxEntries: 9
+    },
+	socialIcons: {
+		'facebook': 'N',
+		'twitter': 'O',
+		'google': 'P',
+		'google_plus': 'P',
+		'tumblr': 'Q',
+		'youtube': 'e',
+		'instagram': 'd',
+		'vine': 'c'
+	},
+
+	socialURLs: {
+		'facebook': 'http://www.facebook.com/{handle}',
+		'twitter': 'http://twitter.com/{handle}',
+		'google': 'http://plus.google.com/{handle}/',
+		'google_plus': 'http://plus.google.com/{handle}/',
+		'tumblr': 'http://{handle}.tumblr.com/',
+		'youtube': 'http://www.youtube.com/user/{handle}',
+		'instagram': 'http://instagram.com/{handle}',
+		'vine': 'http://vine.co/{handle}'
+	},
+
+	/**
+	 * Extend options from base module
+	 */
+	setOptions: function(options) {
+		this.options = $.extend({}, this.defaultOptions, this.extendOptions, options);
+	},
+
+	getData: function (feed) {
+		var data = {},
+			showInfo = feed.show;
+
+		if(typeof feed.show != "undefined"){
+			data.isShow = true;
+			data.showHomeUrl = showInfo.canonicalURL;
+			if(typeof feed.promo != "undefined" && feed.promo.headline != ""){
+				data.showTitle = feed.promo.headline;
+				if(feed.promo.subHeadline != ""){
+					data.subHeadline = feed.promo.subHeadline;
+				}
+			}else{
+				data.showTitle = showInfo.title;
+			}
+			data.showTuneIn = showInfo.shortTuneIn;
+			data.showId = showInfo.id;
+			data.showContentUri = 'id::' + this.options.mgidPrefix + showInfo.id + '::og::' + showInfo.canonicalURL;
+			data.headerBgColor = showInfo.css ? showInfo.css.navigationBackgroundColor : '';
+		}else{
+			data.isShow = false;
+		}
+		if(typeof feed.socialHandlers != "undefined"){
+			data.socials = feed.socialHandlers;
+		}
+		if (data.isShow && feed.showSocialHandlers) {
+			data.socials = feed.showSocialHandlers;
+		}
+		if(typeof feed.showNavigation != "undefined"){
+			data.nav = feed.showNavigation;
+		}
+		if(typeof feed.showNavigation != "undefined"){
+			data.nav = feed.showNavigation;
+		}
+
+		if (feed.siteNavigation[feed.siteNavigation.length - 1].title === 'Social') {
+			data.navItems = feed.siteNavigation.slice(0, feed.siteNavigation.length - 1);
+		} else {
+			data.navItems = feed.siteNavigation;
+		}
+		data.socialNav = feed.socialHandlers;
+
+		if (feed.promo.parameters && feed.promo.parameters.langSearchCC !== false && typeof(feed.promo.parameters.langSearchCC) !== 'undefined') {
+			data.textSearchCC = feed.promo.parameters.langSearchCC;
+		}
+
+		if (feed.promo.parameters && feed.promo.parameters.langSearch !== false && typeof(feed.promo.parameters.langSearch) !== 'undefined') {
+			data.textSearch = feed.promo.parameters.langSearch;
+		}
+
+		if (feed.promo.parameters && feed.promo.parameters.langSeeAll !== false && typeof(feed.promo.parameters.langSeeAll) !== 'undefined') {
+			data.textSeeAll = feed.promo.parameters.langSeeAll;
+		}
+
+		if (feed.promo.parameters && feed.promo.parameters.langAddToFavorites !== false && typeof(feed.promo.parameters.langAddToFavorites) !== 'undefined') {
+			data.textAddToFavorites = feed.promo.parameters.langAddToFavorites;
+		}
+
+		if (feed.promo.parameters && feed.promo.parameters.langAddedToFavorites !== false && typeof(feed.promo.parameters.langAddedToFavorites) !== 'undefined') {
+			data.textAddedToFavorites = feed.promo.parameters.langAddedToFavorites;
+		}
+
+		this.data = data;
+	},
+
+	generateCoreElement: function() {
+		this.coreElement = this.moduleElement.clone();
+		this.siteHeader = this.appendDom(this.coreElement, 'div', { 'class': 'site_header' });
+		this.generateCSSOverrides();
+		this.generateTop();
+	},
+
+	generateCSSOverrides: function () {
+		if (!this.data.headerBgColor) {
+			return;
+		}
+		this.appendDom(this.coreElement, 'style', {
+			'type': 'text/css',
+			'name': 'from_module_ent_m070'
+		}).text('.site_header .top_outer, .site_header .search_wrapper{background:' + this.data.headerBgColor + ';}');
+	},
+
+	generateTop: function () {
+		var tuneInWrapper;
+
+		this.topOuter =  this.appendDom(this.siteHeader, 'div', { 'class': 'top_outer' });
+		this.topInner = this.appendDom(this.topOuter, 'div', { 'class': 'top_inner' });
+
+		this.generateSideMenuHolder();
+		if(this.data.isShow){
+			this.generateShowLogo();
+
+			if (this.data.showTuneIn) {
+				tuneInWrapper = this.appendDom(this.topInner, 'div', { 'class': 'new_eps_info' });
+				this.appendDom(tuneInWrapper, 'p', {}).html(this.data.showTuneIn);
+			}
+
+			this.generateFavoriteShow();
+
+		} else {
+			this.generateSiteLogo();
+		}
+
+		this.generateSearchWrapper(this.topInner);
+		this.genrateShowMenuElements();
+		this.appendDom(this.siteHeader, 'div', { 'class': 'bottom_outer' });
+	},
+
+	/*
+	 * Slide Menu
+	 */
+	generateSideMenuHolder: function () {
+		var menuHolder = this.appendDom(this.topInner, 'div', { 'class': 'menu_holder' }),
+			slideMenu = this.appendDom(menuHolder, 'div', { 'class': 'slide_menu' }),
+			hamburgerButton = this.appendDom(menuHolder, 'div', { 'class': 'hamburger' }),
+			logoButton = this.appendDom(menuHolder, 'a', {
+				'class': 'site_logo',
+				'href' : '/'
+			});
+
+		this.appendDom(menuHolder, 'div', { 'class': 'page_overlay' });
+
+		this.appendDom(hamburgerButton, 'span', { 'class': 'icon' });
+		this.appendDom(hamburgerButton, 'span', { 'class': 'screen-reader-text' }).html( this.options.screenReaderText );
+
+		this.appendDom(logoButton, 'span', { 'class': 'icon', 'data-graphics': this.options.logoDataGraphics	});
+		this.appendDom(logoButton, 'span', { 'class': 'screen-reader-text' }).html( this.options.screenReaderText );
+
+		this.generateSlideMenu(slideMenu);
+	},
+
+	generateSlideMenu: function (container) {
+		var slideMenu = this.appendDom(container, 'div', { 'class': 'slide_menu' }),
+			searchContainer = this.appendDom(slideMenu, 'div', { 'class': 'search' }),
+			sideNavigation = this.appendDom(slideMenu, 'ul', { 'class': 'side_navigation' }),
+			textSearchCC = this.options.searchSitePlaceholder;
+
+		if (this.data.textSearchCC) {
+			textSearchCC = this.data.textSearchCC;
+		}
+
+		this.generateSearch(searchContainer, textSearchCC);
+		this.generateSideNavigation(sideNavigation);
+	},
+
+	generateSideNavigation: function (container) {
+		var navLength = this.data.navItems.length,
+			userBarItem,
+			providerLoginItem,
+			homeItem = this.appendDom(container, 'li', {}),
+			homeLink = this.options.siteBaseHref || '/';
+
+		this.appendDom(homeItem, 'a', { 'href': homeLink }).text( this.options.homeText );
+
+		if (!navLength) {
+			return;
+		}
+
+		for (var i = 0; i < navLength; i++) {
+			this.createSideNavItem(container, this.data.navItems[i]);
+		}
+
+		providerLoginItem = this.appendDom(container, 'li', {
+			'class':'provider_signout',
+			'style':'display:none;'
+		}).text('TV Provider Sign Out');
+
+		userBarItem = this.appendDom(container, 'li', {
+			'class': 'login'
+		});
+		this.appendDom(userBarItem, 'span', {
+			'class': 'sm4Widget',
+			'data-widget': 'smallUserBar'
+		});
+
+		if (this.data.socialNav) {
+			this.generateSocialItem(container, false);
+		}
+	},
+
+	createSideNavItem: function (container, data) {
+		var itemClass = data.title.toLowerCase().replace(/ /g, '_'),
+			listItem = this.appendDom(container, 'li', { 'class': itemClass }),
+			maxElements = this.options.sideNavMaxEntries,
+			textSeeAll = 'See all',
+			elements, navItem, subEntries, subNav;
+
+		if (data.entries) {
+			navItem = this.appendDom(listItem, 'a', {
+				'href': 'javascript:void(0)',
+				'class': 'has_arrow',
+				'data-link': itemClass,
+				'data-graphics-after': 'V'
+			}).html(data.title);
+
+			subEntries = this.appendDom(listItem, 'div', { 'class': 'sub_entries' });
+
+			subNav = this.appendDom(subEntries, 'ul', {});
+			elements = this.getEntryElements(data.entries, true);
+
+			if(elements.length > maxElements){
+				elements.length = maxElements;
+			}
+
+			if (this.data.textSeeAll) {
+				textSeeAll = this.data.textSeeAll;
+			}
+
+			this.appendDom(subEntries, 'a', {'href': data.url, 'class': 'see_all'}).text(textSeeAll+' '+data.title);
+
+			this.addElemsToSideNav(elements, subNav);
+
+		} else {
+			navItem = this.appendDom(listItem, 'a', {
+				'href': data.url,
+				'data-link': itemClass
+			}).html(data.title);
+		}
+	},
+
+	/**
+	 * Adds elements to the vertical navigation
+	 */
+	addElemsToSideNav: function (sortedElems, containerElem) {
+		this.addElemsToColumn(sortedElems, sortedElems.length, containerElem);
+	},
+
+	/**
+	 * Addes elements to the column
+	 */
+	addElemsToColumn: function (elemsSet, itemsInColumn, column) {
+		if (elemsSet.length > itemsInColumn) {
+			column.append(elemsSet.slice(0, itemsInColumn));
+			return elemsSet.slice(itemsInColumn, elemsSet.length);
+		} else {
+			column.append(elemsSet);
+			return false;
+		}
+	},
+
+	getEntryElements: function (entries, isList) {
+		var elements = $(),
+			entriesCount = entries.length,
+			elem;
+
+		for (var i = 0; i < entriesCount; i ++) {
+			if(isList === true){
+				elem = this.createDom('li');
+				this.appendDom( elem, 'a', { 'href': entries[i].url	}).text(entries[i].title);
+			}else{
+				elem = this.createDom('a', { 'href': entries[i].url	}).text(entries[i].title);
+			}
+			elements = elements.add(elem);
+		}
+
+		return elements;
+	},
+
+	/**
+	 * Generates search wrapper for the top part of header
+	 */
+	generateSearchWrapper: function(container) {
+		var searchWrapper = this.appendDom(container, 'div', { 'class': 'search_wrapper' }),
+			formContainment =  this.appendDom(searchWrapper, 'div', { 'class': 'form_containment' }),
+			textSearch = this.options.searchShowPlaceholder;
+
+		if (this.data.textSearch) {
+			textSearch = this.data.textSearch;
+		}
+
+		this.appendDom(searchWrapper, 'div', {
+			'class': 'hide_search',
+			'data-graphics': 'W' });
+
+		this.generateSearch(formContainment, textSearch);
+	},
+
+	generateSearch: function (container, placeholder) {
+		var isSlideMenu = container.closest('.slide_menu').length,
+			form = this.appendDom(container, 'form', {
+				'action': isSlideMenu ? this.options.siteBaseHref + 'search' : '/search'
+			});
+
+		this.appendDom(form, 'input', {
+			'type': 'text',
+			'class': 'search_input',
+			'name': 'searchKeywords',
+			'placeholder': placeholder
+		});
+
+		this.appendDom(form, 'input', {
+			'class': 'search_btn',
+			'type': 'submit',
+			'value': 'M'
+		});
+
+		this.appendDom(form, 'div', {
+			'class': 'preload_wrapper'
+		});
+	},
+
+	generateSocialItem: function (container, addUserBar) {
+		var socialItem = this.appendDom(container, 'li', {
+				'class': 'social'
+			}),
+			socialNavs = this.data.socialNav,
+			socialURL,
+			iconItem,
+			socialKey,
+			socialUser;
+
+		for (var i in socialNavs) {
+			socialKey = this.sanitizeKey(i);
+			socialURL = this.getSocialURL(socialKey, socialNavs[i]);
+
+			if (!socialURL) {
+				continue;
+			}
+
+			iconItem = this.appendDom(socialItem, 'a', {
+				'href': socialURL,
+				'target': '_blank',
+				'class': 'notriforce'
+			});
+			this.appendDom(iconItem, 'span', {
+				'class': 'icon',
+				'data-graphics': this.socialIcons[socialKey]
+			});
+			this.appendDom(iconItem, 'span', {
+				'class': 'screen-reader-text'
+			});
+		}
+
+		if(addUserBar === true){
+			socialUser = this.appendDom(socialItem, 'div', { 'class': 'top_flux_userbar' });
+			this.appendDom(socialUser, 'span', { 'data-widget': 'smallUserBar' });
+		}
+	},
+
+	sanitizeKey: function (key) {
+		return key.toLowerCase().replace(/ /g, '_');
+	},
+
+	generateSocialHolder: function(container) {
+		if ($.isEmptyObject(this.data.socials)) {
+			return;
+		}
+		var socialHolder = this.appendDom(container, 'li', {
+				'class': 'social'
+			}),
+			socials = this.data.socials,
+			socialURL,
+			socialKey,
+			socialItem, socialLink;
+
+		for (var item in socials) {
+			if (socials.hasOwnProperty(item)) {
+				socialKey = this.sanitizeKey(item);
+				socialURL = this.getSocialURL(socialKey, socials[item]);
+
+				if (!socialURL) {
+					continue;
+				}
+
+				socialLink = this.appendDom(socialHolder, 'a', {
+					'href': socialURL,
+					'target': '_blank',
+					'class': 'notriforce'
+				});
+				this.appendDom(socialLink, 'span', { 'data-graphics': this.socialIcons[socialKey] });
+				this.appendDom(socialLink, 'span', { 'class': 'screen-reader-text' }).html(item);
+			}
+		}
+
+		socialItem = this.appendDom(socialHolder, 'div', { 'class': 'top_flux_userbar' });
+		this.appendDom(socialItem, 'span', { 'data-widget': 'smallUserBar' });
+		if(this.options.sm4Widget){
+			this.appendDom(socialItem, 'span', {
+				'class': 'sm4Widget',
+				'data-widget': 'userProfile'
+			});
+		}
+	},
+
+	getSocialURL: function (type, URI) {
+		if (/^https?:\/\//.test(URI)) {
+			return URI;
+		}
+		if (this.socialURLs[type]) {
+			return this.socialURLs[type].replace('{handle}', URI);
+		}
+	},
+
+	generateSiteLogo: function () {
+		var logoOuter,
+			fullLogo;
+
+		logoOuter = this.appendDom(this.topInner, 'a', {
+			'class': this.data.isShow ? 'site_logo' : 'logo',
+			'href': '/'
+		});
+
+		if(this.data.isShow){
+			this.appendDom(logoOuter, 'span', { 'class': 'icon'});
+		}else{
+			this.appendDom(logoOuter, 'span', { 'class': 'icon', 'data-graphics': '@'});
+		}
+
+		fullLogo = this.appendDom(this.topInner, 'div', { 'class': 'full_logo_wrapper' });
+		this.appendDom(fullLogo, 'div', { 'class': 'logo_anim' });
+	},
+
+	generateShowLogo: function () {
+		var additionalClass = '',
+			logoOuter,
+			logoInner;
+		if(this.data.showTitle.length > 20) {
+			additionalClass = ' long_title';
+		} else if(this.data.showTitle.length > 12) {
+			additionalClass = ' medium_title';
+		}
+
+		logoOuter = this.appendDom(this.topInner, 'a', {
+			'href': this.data.showHomeUrl,
+			'class': 'show_logo' + additionalClass
+		});
+		logoInner = this.appendDom(logoOuter, 'span', {
+			'class': 'wrapper'
+		});
+		this.appendDom(logoInner, 'h1', {
+			'class': 'title'
+		}).html(this.data.showTitle);
+
+		if(typeof this.data.subHeadline != "undefined" ){
+			this.appendDom(logoInner, 'span', {
+				'class': 'subtitle'
+			}).html(this.data.subHeadline);
+		}
+	},
+
+	generateFavoriteShow: function () {
+		var textAddToFavorites = 'add to favorites',
+			textAddedToFavorites = 'Added to favorites';
+
+		if (this.data.textAddToFavorites) {
+			textAddToFavorites = this.data.textAddToFavorites;
+		}
+		if (this.data.textAddedToFavorites) {
+			textAddedToFavorites = this.data.textAddedToFavorites;
+		}
+
+        this.generateFollowWidget(this.topInner);
+        this.generateFollowWidgetMarkup(this.topInner, {
+            hoverHintText: textAddToFavorites,
+            tappedHintText: textAddedToFavorites
+        });
+	},
+
+    generateFollowWidget: function (parentElement) {
+        this.appendDom(parentElement, 'div', {
+            'class': 'follow_widget',
+            'data-showid': this.data.showId,
+            'data-widget': 'headerShowFollow',
+            'data-contenturi': this.data.showContentUri
+        });
+    },
+
+    generateFollowWidgetMarkup: function (parentElement, data) {
+        this.appendDom(parentElement, 'div', {
+            'id': 'headerShowFollowMarkup'
+        }).html('<!--'
+                + '<ul>'
+                    + '<li class="externalService1">'
+                        + '<div class="has_icon favorite followButton">'
+                        + '</div>'
+                    + '</li>'
+                + '</ul>'
+                + '<div class="hover_hint">' + data.hoverHintText + '</div>'
+                + '<div class="tapped_hint">' + data.tappedHintText + '</div>'
+                + '-->');
+    },
+
+	genrateShowMenuElements: function (container) {
+		var menuButton,
+			menuList,
+			showMenu,
+			showMenuInner;
+
+		if(this.data.isShow){
+			showMenu =  this.appendDom(this.topInner, 'div', { 'class': 'show_menu_wrapper' });
+			menuButton =  this.appendDom(showMenu, 'div', { 'class': 'show_menu_btn' });
+			menuList = this.appendDom(showMenu, 'ul', { 'class': 'show_menu' });
+			this.generateMenuButton(menuButton);
+		}else{
+			showMenu =  this.appendDom(this.topOuter, 'div', { 'class': 'site_menu_wrapper' });
+			showMenuInner =  this.appendDom(showMenu, 'div', { 'class': 'site_menu_inner' });
+			menuList = this.appendDom(showMenuInner, 'ul', { 'class': 'main_nav' });
+		}
+
+		this.generateMenuList(menuList);
+
+		if (this.data.socialNav) {
+			if (this.data.isShow){
+				this.generateSocialHolder(menuList);
+			} else {
+				this.generateSocialItem(menuList, true);
+			}
+		}
+	},
+
+	generateMenuButton: function (container) {
+		this.appendDom(container, 'span', {}).html('menu');
+		this.appendDom(container, 'span', {
+			'data-graphics': 'V'
+		});
+	},
+
+	generateMenuList: function (container) {
+		if(this.data.isShow){
+			for (navKey in this.data.nav) {
+				navItem = this.appendDom(container, 'li', { 'class': this.data.nav[navKey].entries ? 'has_arrow' : '' });
+
+				this.appendDom(navItem, 'a', {
+					'class': this.data.nav[navKey].title.toLowerCase().replace(/\s/g, '_'),
+					'href': this.data.nav[navKey].url
+				}).text(this.data.nav[navKey].title);
+
+				if (this.data.nav[navKey].entries) {
+					var entries = this.data.nav[navKey].entries,
+						subNav = this.appendDom(navItem, 'ul', {
+							'class': 'sub_nav'
+						});
+
+					for (var j = 0; j < entries.length; j++) {
+						var subNavItem = this.appendDom(subNav, 'li', {});
+						this.appendDom(subNavItem, 'a', {
+							'href': entries[j].url,
+							'class': entries[j].title.toLowerCase().replace(/\s/g, '_')
+						}).text(entries[j].title);
+					}
+				}
+			}
+		} else {
+			for (var i = 0; i < this.data.navItems.length; i ++) {
+				this.createNavItem(container, this.data.navItems[i]);
+			}
+			//mainNav.append(this.navDropdowns);
+		}
+	},
+
+	createNavItem: function (container, navData) {
+		var listItem = this.appendDom(container, 'li', {}),
+			navUrl = navData.url,
+			navItem,
+			subNavClass;
+
+		navItem = this.appendDom(listItem, 'a', {
+			'class': navData.title.toLowerCase().replace(/\s/g, '_'),
+			'href': navUrl
+		}).html(navData.title);
+
+		if (navData.entries) {
+			subNavClass = navData.title.toLowerCase().replace(/ /g, '_');
+
+			navItem.attr({
+				'data-link': subNavClass,
+				'data-graphics-after': 'V'
+			}).addClass('has_arrow');
+
+			this.createNavDropdown(navData, subNavClass, listItem);
+		}
+	},
+
+	createNavDropdown: function (navData, subNavClass, appendTo) {
+		var dropdown = this.appendDom(appendTo, 'div', { 'class': 'menu_dropdown ' + subNavClass }),
+			dropdownInner = this.appendDom(dropdown, 'div', {});
+
+		this.appendDom(dropdownInner, 'a', {
+			'class': 'close',
+			'href': 'javascript:void(0)',
+			'data-graphics': 'W'
+		});
+
+		this.generateSideA(dropdownInner, navData);
+		this.generateSideB(dropdownInner, navData);
+	},
+
+	generateSideA: function (container, navData) {
+		var additionalClass = navData.promotions && navData.promotions.length ? '' : ' wide',
+			sidea = this.appendDom(container, 'div', { 'class': 'sidea' + additionalClass }),
+			links = this.appendDom(sidea, 'div', { 'class': 'links' }),
+
+			numberEntries = navData.entries.length,
+			numberColumns = this.getNumberColumns(navData.promotions),
+			itemsInColumn = this.getNumberItemsInColumn(numberEntries, numberColumns),
+			elements = this.getEntryElements(navData.entries, false);
+
+		this.addElemsToTopNav(elements, links, numberColumns, itemsInColumn);
+
+		this.appendDom(sidea, 'a', {
+			'class': 'see_all',
+			'href': navData.url
+		}).html('see all ' + navData.title);
+	},
+
+	generateSideB: function (container, navData) {
+		if (!navData.promotions || !navData.promotions.length) {
+			return;
+		}
+		var promo = navData.promotions[0],
+			sideb = this.appendDom(container, 'a', {
+				'class': 'sideb',
+				'href': promo.url
+			});
+		this.appendImage(sideb, promo.images[0]);
+		this.appendDom(sideb, 'span', {'style': 'background-color:'+promo.bgColor }).html(promo.headerText);
+	},
+
+	getNumberColumns: function (promotions) {
+		return (promotions && promotions.length) ? 3 : 4;
+	},
+
+	getNumberItemsInColumn: function (count, numberOfColumns) {
+		var itemsInColumn = Math.ceil(count / numberOfColumns);
+		return itemsInColumn < 3 ? 3 : itemsInColumn;
+	},
+
+	addElemsToTopNav: function (elems, containerElem, numberOfColumns, itemsInColumn) {
+		var column;
+
+		for (var i = 0; i < numberOfColumns; i ++) {
+			if (!elems) {
+				return;
+			}
+			column = $('<div class="column"></div>');
+			elems = this.addElemsToColumn(elems, itemsInColumn, column);
+			containerElem.append(column);
+		}
+	},
+
+	setOutput: function() {
+		this.moduleElement = this.replaceModuleElement(this.moduleElement, this.coreElement);
+		this.moduleElement.fadeIn();
+		return this.moduleElement;
+	}
+});
+/* Controller.js */
+$Crabapple.TriforceModule_ent_m066_v3_0_0 = {
+    parentController: '$Crabapple.TriforceModule_ent_m070_v4_1_1',
+    extension: {
+    }
+};
+/* View.js */
+$Crabapple.TriforceView_ent_m066_v3_0_0 = {};
+$Crabapple.TriforceView_ent_m066_v3_0_0.parentView = '$Crabapple.TriforceView_ent_m070_v4_1_1';
+$Crabapple.TriforceView_ent_m066_v3_0_0.extention = {
+};
+/* Controller.js */
+/*
+ @name: MTV Header
+ @functional: http://confluence.mtvi.com/display/ENT/ENT_M066+-+MTV+Header
+ @styleguide: http://confluence.mtvi.com/display/ENT/Javascript+Style+Guide
+ @author: $Author: saterfij $
+ */
+$Crabapple.TriforceModule_ent_m066_mtv_V1_0_0 = {
+    parentController: '$Crabapple.TriforceModule_ent_m066_v3_0_0',
+    extension: {
+        options: {
+            logoDataGraphics: 'A',
+            screenReaderText: 'MTV',
+            homeText: 'MTV Home',
+            siteBaseHref: 'http://www.mtv.com/',
+            searchSitePlaceholder: 'Search',
+            searchShowPlaceholder: 'Search',
+            cookie: 'favoriteShows',
+            favedClass: 'favorited',
+            scrollClass: 'sticky_header',
+            scrollTopClass: 'un_sticky_header',
+            openedMobileMenuClass: 'visible',
+            videoPlayerSelector: 'iframe#video_player',
+            isTriforce: $('body').hasClass('triforce_rendered'),
+            sideNavMaxEntries: 12
+        }
+    }
+};

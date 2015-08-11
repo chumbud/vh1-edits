@@ -1,0 +1,121 @@
+
+/* v2.js */
+/* 
+	@name: ENT_TFV300_V2
+	@functional: http://confluence.mtvi.com/display/ENT/ENT_TFV300_V2
+	@styleguide: http://confluence.mtvi.com/display/ENT/Javascript+Style+Guide
+	@author: $Author: kavaliot $
+*/
+
+$Crabapple.TriforceView_ent_tfv300_v2 = function() {};
+$Crabapple.extend($Crabapple.TriforceView, $Crabapple.TriforceView_ent_tfv300_v2, {
+	coreElement: null,
+	moduleWrapper: null,
+
+	/**
+	 * Generates core element
+	 */
+	generateCoreElement: function() {
+		this.moduleWrapper = this.getModuleWrapper(this.moduleElement); 
+
+		this.coreElement = this.appendDom(this.moduleWrapper, 'div', {
+			class: 'module_content s_container'
+		});
+	},
+
+	/**
+	 * Enhances the view(in that case just sets correct coreElement)
+	 * @param coreElement
+	 */
+	enhance: function (coreElement) {
+		this.coreElement = coreElement.find('.module_content');
+	},
+
+	/**
+	 * Sets output(core element) to the page
+	 */
+	setOutput: function() {
+		this.moduleElement = this.replaceModuleElement(this.moduleElement, this.moduleWrapper);
+
+		return this.moduleElement.show();
+	}
+});
+/* Controller.js */
+$Crabapple.TriforceModule_ent_m058_V1_0_0 = function() {};
+$Crabapple.extend($Crabapple.TriforceModule, $Crabapple.TriforceModule_ent_m058_V1_0_0, {
+    viewName: '$Crabapple.TriforceView_ent_m058_V1_0_0',
+
+    initializeView: function () {
+         this.view.render(this.feedResponse.result);
+         this.moduleElement = this.view.setOutput();
+    }
+
+});
+/* View.js */
+/*
+ @name: ENT_M151 - Featured Series Full Episodes Grid
+ @functional: https://confluence.mtvi.com/display/ENT/ENT_M151_MTV+-+Featured+Series+Full+Episodes+Grid
+ @author: $Author: rodridar
+ */
+
+
+$Crabapple.TriforceView_ent_m058_V1_0_0 = {
+    parentView: '$Crabapple.TriforceView_ent_tfv300_v2',
+    extention: {
+        render: function (data) {
+            this.data = data;
+            this.generateCoreElement();
+            this.generateModuleContent();
+        },
+        generateModuleContent: function () {
+            if (this.data.ptsInformation.length > 0){
+                var sectionContent = this.appendDom(this.coreElement, 'section', {
+                    'id': 'section-primetime'
+                });
+
+                var sectionContainer = this.appendDom(sectionContent, 'div', {'class': 'container'}),
+                    rowContainer = this.appendDom(sectionContainer, 'div', {'class': 'row'}),
+                    labelContainer = this.appendDom(rowContainer, 'div', {'class': 'col-lg-12'}),
+                    label = this.appendDom(labelContainer, 'div', {'class': 'label'}).text('tonight');
+
+
+                var ptsInfo1 = this.data.ptsInformation[0];
+                if (ptsInfo1.tuneIn != '') {
+                    var tuneinContainer = this.appendDom(rowContainer, 'div', {'class': 'col-lg-4 col-md-12 col-sm-12 headline show-tunein-info'}),
+                        tunein = this.appendDom(tuneinContainer, 'span', {'class': 'muted'}).text(ptsInfo1.tuneIn);
+
+                    if (ptsInfo1.seriesURL != '') {
+                        var tuneinLink = this.appendDom(tuneinContainer, 'a', {'href': ptsInfo1.seriesURL}),
+                            tuneinLabel = this.appendDom(tuneinLink, 'span').text(ptsInfo1.seriesName);
+                    }  else if (ptsInfo1.seriesName!='') var tuneinLabel = this.appendDom(tuneinContainer, 'span').text(ptsInfo1.seriesName);
+                }
+
+                if (this.data.ptsInformation.length > 1) {
+                    var ptsInfo2 = this.data.ptsInformation[1];
+                    if (ptsInfo2.tuneIn != '') {
+                        var tuneinContainer2 = this.appendDom(rowContainer, 'div', {'class': 'col-lg-5 col-md-12 col-sm-12 headline show-tunein-info'}),
+                            tunein2 = this.appendDom(tuneinContainer2, 'span', {'class': 'muted'}).text(ptsInfo2.tuneIn);
+
+                        if (ptsInfo2.seriesURL != '') {
+                            var tuneinLink2 = this.appendDom(tuneinContainer2, 'a', {'href': ptsInfo2.seriesURL}),
+                                tuneinLabel2 = this.appendDom(tuneinLink2, 'span').text(ptsInfo2.seriesName);
+                        } else if (ptsInfo2.seriesName!='') var tuneinLabel2 = this.appendDom(tuneinContainer2, 'span').text(ptsInfo2.seriesName);
+                    }
+                }
+
+                var ctaContainer = this.appendDom(rowContainer, 'div', {'class': 'col-lg-3 call-to-action pull-right'}),
+                ctaLink = this.appendDom(ctaContainer, 'a', {'href':this.data.tvSchedulePageURL,'class': 'btn btn-primary btn-cta'}),
+                ctaWrapper = this.appendDom(ctaLink, 'span').text('full tv schedule'),
+                ctaWrapperIcon = this.appendDom(ctaWrapper, 'span', {'class': 'icon-chevron-right'});
+            }
+        }
+
+    }
+};
+
+
+/* Controller.js */
+$Crabapple.TriforceModule_ent_m058_mtv_V1_0_0 = function() {};
+$Crabapple.extend($Crabapple.TriforceModule_ent_m058_V1_0_0 , $Crabapple.TriforceModule_ent_m058_mtv_V1_0_0, {
+	viewName: '$Crabapple.TriforceView_ent_m058_V1_0_0'
+});

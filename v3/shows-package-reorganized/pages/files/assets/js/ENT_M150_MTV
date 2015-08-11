@@ -1,0 +1,209 @@
+
+/* v2.js */
+/* 
+	@name: ENT_TFV300_V2
+	@functional: http://confluence.mtvi.com/display/ENT/ENT_TFV300_V2
+	@styleguide: http://confluence.mtvi.com/display/ENT/Javascript+Style+Guide
+	@author: $Author: kavaliot $
+*/
+
+$Crabapple.TriforceView_ent_tfv300_v2 = function() {};
+$Crabapple.extend($Crabapple.TriforceView, $Crabapple.TriforceView_ent_tfv300_v2, {
+	coreElement: null,
+	moduleWrapper: null,
+
+	/**
+	 * Generates core element
+	 */
+	generateCoreElement: function() {
+		this.moduleWrapper = this.getModuleWrapper(this.moduleElement); 
+
+		this.coreElement = this.appendDom(this.moduleWrapper, 'div', {
+			class: 'module_content s_container'
+		});
+	},
+
+	/**
+	 * Enhances the view(in that case just sets correct coreElement)
+	 * @param coreElement
+	 */
+	enhance: function (coreElement) {
+		this.coreElement = coreElement.find('.module_content');
+	},
+
+	/**
+	 * Sets output(core element) to the page
+	 */
+	setOutput: function() {
+		this.moduleElement = this.replaceModuleElement(this.moduleElement, this.moduleWrapper);
+
+		return this.moduleElement.show();
+	}
+});
+/* Controller.js */
+/*
+ @name: ENT_M149 - Vertical Header
+ @functional: https://confluence.mtvi.com/display/ENT/ENT_M150+-+Shows+AZ
+ @styleguide: http://confluence.mtvi.com/display/ENT/Javascript+Style+Guide
+ @author: $Author: rodridar $
+ */
+
+
+$Crabapple.TriforceModule_ent_m150_V1_0_0 = function() {};
+$Crabapple.extend($Crabapple.TriforceModule, $Crabapple.TriforceModule_ent_m150_V1_0_0, {
+    viewName: '$Crabapple.TriforceView_ent_m150',
+    boxAdEnabled:false,
+    initializeView: function () {
+        var feed = this.feedResponse.result;
+
+        this.view.generateCoreElement();
+        this.view.render(feed,{
+            boxAdEnabled:this.boxAdEnabled
+        });
+        this.moduleElement = this.view.setOutput();
+    },
+    addEvents: function(){
+        var _this = this,
+            letter = 'A', //default letter to display
+            target = '#collapse'+letter,
+            moduleElement = this.moduleElement,
+            accordionBody = moduleElement.find('.accordion-body');
+
+        // hide all items
+        accordionBody.hide();
+
+        // just show the default item Letter A.
+        moduleElement.find('#label'+letter).addClass('active');
+        moduleElement.find(target).show();
+
+        _this.adjustAccordianHeight(target);
+
+        $(".accordion-toggle").on('click', function (e) {
+            e.preventDefault();
+            if($(this).hasClass('disabled')){
+                return;
+            }
+            var letter = $(this).attr("data-char"),
+                target = '#collapse'+letter;
+
+            accordionBody.hide();
+            moduleElement.find('.accordion-heading').removeClass('active');
+            moduleElement.find('#label'+letter).addClass('active');
+            moduleElement.find(target).show();
+            _this.adjustAccordianHeight(target);
+        });
+    },
+
+    adjustAccordianHeight: function(target) {
+        var moduleElement = this.moduleElement,
+            accordionHeading = moduleElement.find('.accordion-heading'),
+            theTarget = moduleElement.find(target);
+
+        if($(window).width() > 979){
+            moduleElement.find(".accordion-group").height(accordionHeading.outerHeight() + theTarget.outerHeight());
+        } else {
+            moduleElement.find(".accordion-group").height(((accordionHeading.size()+2) * accordionHeading.outerHeight()) + theTarget.outerHeight());
+        }
+        return false;
+    }
+});
+/* View.js */
+/*
+ @name: ENT_M150 - Shows A-Z view
+ @functional: https://confluence.mtvi.com/display/ENT/ENT_M150+-+Shows+AZ
+ @author: $Author: rodridar
+ */
+
+
+$Crabapple.TriforceView_ent_m150 = {
+    parentView: '$Crabapple.TriforceView_ent_tfv300_v2',
+    extention: {
+        render: function (data, options) {
+            this.data = data;
+            this.options = options;
+            this.generateModuleContent();
+        },
+
+        generateModuleContent: function () {
+
+            var section = this.appendDom(this.coreElement, 'section', {
+                'id': 'section-azshows'
+            });
+
+            var container = this.appendDom(section, 'div', {'class': 'container'}),
+                row = this.appendDom(container, 'div', {'class': 'row'}),
+                //col = this.appendDom(row, 'div', {'class': 'col-lg-12'}),
+                moduleContent = this.appendDom(row, 'div', {'class': 'alphafilter-wrap'});
+
+            if(this.options.boxAdEnabled){
+                var azAd = this.appendDom(moduleContent, 'div', {'id': 'az-ad'}),
+                    adContainer = this.appendDom(azAd, 'div', {'class': 'ad-container', 'data-adsize':'300x250'});
+            }
+
+            var sectionHeaderWrapper = this.appendDom(moduleContent, 'div', {'class': 'col-lg-12'}),
+                sectionHeader = this.appendDom(sectionHeaderWrapper, 'header', {'class': 'section-header-1 section-header-lg'}),
+                header = this.appendDom(sectionHeader, 'h2').text('all shows');
+
+            var accordianWrapper = this.appendDom(moduleContent, 'div', {'class': 'col-lg-12'}),
+                accordian = this.appendDom(accordianWrapper, 'div', {'class': 'accordion', 'id': 'alphafilter'}),
+                accordianGroup = this.appendDom(accordian, 'div', {'class': 'accordion-group group panel'});
+
+            /*
+            for each (key in this.data.shows) {
+                console.log(key);
+            }*/
+
+            var keys = Object.keys(this.data.shows);
+            for(var i =0; i < keys.length; i++) {
+                var letter = this.capitalizeFirstLetter(keys[i]);
+                var char = letter;
+                if(letter == 'Hash'){
+                    char = '#';
+                }
+                var accordianHeading = this.appendDom(accordianGroup, 'div', {'class': 'accordion-heading', 'id': 'label' + letter }),
+                    accordianToggle = this.appendDom(accordianHeading, 'a', {'class': 'accordion-toggle', 'data-parent': '#alphafilter', 'data-char':letter, 'href':'#collapse'+letter}).html(char + '<span class="hidden-lg icon-chevron-down pull-right"></span>');
+
+                var accordianBody = this.appendDom(accordianGroup, 'div', {
+                        'class': 'accordion-body',
+                        'id': 'collapse' + letter,
+                        'data-char': letter
+                    }),
+                    accordianInner = this.appendDom(accordianBody, 'div', {'class': 'accordion-inner'}),
+                    accordianInnerRow = this.appendDom(accordianInner, 'div', {'class': 'row'}),
+                    accordianInnerCol = this.appendDom(accordianInnerRow, 'div', {'class': 'col-md-12'}),
+                    accordianList = this.appendDom(accordianInnerCol, 'ul', {});
+
+                var items = this.data.shows[eval('keys[i]')];
+                if(items.length == 0){
+                    accordianToggle.addClass('disabled');
+                }
+                for(var j =0; j < items.length; j++) {
+                    var showUrl = '#';
+                    if(items[j].url != ''){
+                        showUrl = items[j].url;
+                    }
+                    accordianItem = this.appendDom(accordianList, 'li', {'class': 'show-item'}),
+                    link = this.appendDom(accordianItem, 'a', {'href': showUrl }).text(items[j].title);
+                }
+            }
+        },
+
+        capitalizeFirstLetter:function (string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+    }
+};
+/* Controller.js */
+/*
+ @name: ENT_M150 - Shows A-Z
+ @functional: https://confluence.mtvi.com/display/ENT/ENT_M150_MTV+-+Shows+AZ
+ @styleguide: http://confluence.mtvi.com/display/ENT/Javascript+Style+Guide
+ @author: $Author: rodridar $
+ */
+
+
+$Crabapple.TriforceModule_ent_m150_mtv_V1_0_0 = function() {};
+$Crabapple.extend($Crabapple.TriforceModule_ent_m150_V1_0_0, $Crabapple.TriforceModule_ent_m150_mtv_V1_0_0, {
+    boxAdEnabled: true
+});

@@ -1,0 +1,118 @@
+
+/* embedded style sheet from christa's proto */
+
+#dropdown-menu_btn { min-width: 170px; }
+
+/*//pj// adding the css you made from the styles-hub-full-episodes css file to style the button*/
+.dropdown-menu_container {
+	margin-top: 20px;
+	margin-bottom: 10px;
+	display: inline-block;
+	min-width: 180px;
+	position: relative;
+}
+
+.dropdown-menu_container a {
+	color: white;
+}
+
+#dropdown-menu_btn {
+	background-color: #1a1a1a;
+	border-radius: 3px;
+	display: table-cell;
+	min-height: 45px;
+	padding: 8px 13px 11px;
+	vertical-align: middle;
+	font-size: 2.3rem;
+	line-height:1.15;
+}
+
+#dropdown-menu_btn > div {
+	float: left;
+	display: block;
+	width: 100%;
+}
+
+#dropdown-menu_btn div [class*="icon-"] {
+	float: right;
+	font-size: 0.9em;
+	margin-top: 0.23em;
+}
+
+#dropdown-menu_btn div:last-child {
+	font-size: 0.7em;
+	font-weight: 200;
+	color: #aaa;
+	letter-spacing:0.04em;
+}
+
+#dropdown-menu_menu {
+	display: none;
+	position: absolute;
+	z-index: 5;
+	margin-top: -2px;
+	width: 100%;
+	background-color: #1a1a1a;
+}
+
+#dropdown-menu_menu ul {
+	display: inline-block;
+	background-color: rgba(255,255,255,0.1);
+	width: 100%;
+	min-width: 180px;
+	margin-bottom: 0;
+}
+
+#dropdown-menu_menu ul li a {
+	display: block; font-size: 2rem;
+	font-weight: 400;
+	line-height: 1;
+	padding: 10px;
+}
+
+#dropdown-menu_menu ul li a:hover {
+	border-left: 5px solid #00bbef;
+	color: #00bbef;
+}
+
+#dropdown-menu_menu ul li small {
+	font-size: 0.65em;
+	color: #aaa;
+	letter-spacing: 0.04em;
+	font-weight: 200;
+}
+/*end addition*/
+
+.date-today { margin: 20px 0 30px; }
+#schedule-accordian {padding-top: 0; float: left; width: 100%; display: block;}
+#schedule-accordian .list-item {float: left; width: 100%; display: block; min-height: 45px; padding: 15px 0; }
+#schedule-accordian .list-item:nth-child(even) { background: none repeat scroll 0 0 #e5e5e5; }
+#schedule-accordian .list-item:nth-child(odd) { background: none repeat scroll 0 0 #f1f1f1; }
+#schedule-accordian .list-item .container .row > div { display: inline-block;}
+
+
+/*//pj// text-transform*/
+#schedule-accordian .list-item .headline-l {
+	text-transform: capitalize;
+}
+#schedule-accordian .list-item .season_info {
+	text-transform: capitalize;
+}
+
+#schedule-accordian .list-item .btn { margin-right: 20px; margin-top: 7px; }
+#schedule-accordian .list-item .time { font-weight: 400; margin-top: 8px;}
+
+#schedule-accordian .accordian-trigger { padding-top: 15px; }
+#schedule-accordian .accordian-trigger [class*="icon-"] { font-size: 2.3rem; }
+
+.show-header { max-height: 435px; margin-bottom: 10px; background-color: #333; color: white;}
+.label {background-color:black; padding-bottom:10px; vertical-align:middle; margin-top:50px;}
+/*//pj// text-transform*/
+.show-title {font-size:2em; text-transform: capitalize; font-weight:800; margin-bottom:50px;}
+
+@media (max-width: 659px) {
+	.date-today { margin: 10px 0 20px; }
+
+	#schedule-accordian .list-item .headline-l { font-size: 2.0rem; }
+	#schedule-accordian .list-item .time { margin-top: 0; }
+}

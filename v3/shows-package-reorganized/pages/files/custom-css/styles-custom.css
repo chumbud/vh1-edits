@@ -1,0 +1,722 @@
+
+
+/* general styles
+------------------------------------------------------------------------------------------------------------------------ */
+
+body {
+    background-color: #f4f4f4;
+    color: #222;
+    font-size: 1.8rem;
+}
+
+a {
+    color: #222;
+}
+
+a:hover {
+    color: #6e00af;
+}
+/*//pj// made margin larger*/
+footer {
+    margin-top: 40px;
+}
+
+/* navbar fonts
+------------------------------------------------------------------------------------------------------------------------ */
+
+.navbar {
+    font-family: "VH1ReplicaTT", Helvetica, Arial, sans-serif;
+}
+/* NOTE: VH1ReplicaTT should only exist in the navbar;
+all HTML type beneath the navbar, on every page, should now be Proxima */
+
+
+
+/* navbar background
+------------------------------------------------------------------------------------------------------------------------ */
+
+.navbar, .navbar-inner .container #nav-top .nav-collapse .nav {
+    background-color: #6e00af;
+}
+
+.navbar #ad-container {
+    background-color: rgba(0,0,0,1);
+}
+
+
+
+/* misc navbar elements — sizing, padding and vertical centering
+------------------------------------------------------------------------------------------------------------------------ */
+
+.navbar-inner .container #nav-top .brand a {
+    padding: 0 5px 0 0;
+}
+
+.navbar-inner .container #nav-top .brand a span{
+    font-size: 6rem;
+    margin-top: 0;
+    line-height: 5rem;
+}
+
+.navbar-inner .container #nav-top .title {
+    font-size: 2.2rem;
+    line-height: 2.45;
+}
+
+#nav-top .icon-chevron-down {
+    font-size: 2rem;
+}
+
+@media (max-width: 979px){
+    .navbar-inner .container #nav-top .title {
+        margin-left: 108px;
+    }
+}
+
+@media (max-width: 659px){
+    .navbar-inner .container #nav-top .title {
+        display: table-cell;
+        max-width: 180px;
+        font-size: 2rem;
+        line-height: 1;
+    }
+}
+
+
+
+/* hero tune-in label
+------------------------------------------------------------------------------------------------------------------------ */
+
+/*
+
+- problem with this area
+- for some reason changing this div screws everything else up in this style sheet
+- styled directly within the page for now
+- possibly fix later
+
+*/
+
+
+
+/* hero cta chevron
+------------------------------------------------------------------------------------------------------------------------ */
+
+.hp-content .tune-in .btn [class*="icon-"]{
+    background: none;
+    border-radius: none;
+    color: #fff;
+    display: inline-table;
+    margin-left: 0 ;
+    vertical-align: middle;
+    padding: 0;
+    text-shadow: none;
+    text-align: center;
+    font-size: 72%;
+    line-height: .4;
+}
+
+@media (max-width: 659px) {
+    .hp-content .tune-in .btn-cta {
+            font-size: 5.5vw;
+        }
+}
+
+
+
+/* background color and padding above main content section
+------------------------------------------------------------------------------------------------------------------------ */
+
+#content {
+    padding-top: 20px;
+    background: #f4f4f4;
+}
+
+@media (max-width: 979px){
+    #content {
+        padding-top: 15px;
+    }
+}
+
+
+
+/* meta-wrap labels — padding adjustment to center text within labels, label hover state
+------------------------------------------------------------------------------------------------------------------------ */
+
+.item .meta-wrap .label {
+    font-size: 1.6rem;
+    padding: 0.5rem 0.7rem 0.2rem;
+    position: absolute;
+    line-height: 1.0;
+    height: 2.6rem;
+    margin-top: -3.1rem; /* = .meta-wrap { padding-top } + .label { height } */
+}
+
+a.label:hover {
+    background-color: #6e00af;
+    color: #fff;
+}
+
+@media (max-width: 659px) {
+    .item .meta-wrap .label { margin-top: 0; margin-bottom: .5rem; position: relative; }
+    .item.video-block.full-ep .media { background-color: #f2f2f2; padding-left: 0; }
+    .item .media {
+        margin-top: 4px;
+    }
+}
+
+@media (min-width: 660px){
+    #popular-shows .item .meta-wrap .label,
+    .latest-full-episodes .item .meta-wrap .label {
+        margin-top: -3.4rem;
+    }
+}
+
+
+/* item flags
+------------------------------------------------------------------------------------------------------------------------ */
+
+.item .flag {
+    position: absolute;
+    z-index: 3;
+    background-color: #48c0dd;
+    top: -5px;
+    left: -5px;
+    text-align: center;
+    color: #FFF;
+    letter-spacing: -0.01em;
+}
+
+a:hover .item .flag {
+    color: #fff;
+}
+
+
+
+/* button — icon sizing, vertical text centering
+------------------------------------------------------------------------------------------------------------------------ */
+
+[class*="btn-"] [class*="icon-"] {
+    font-size: 0.8em;
+}
+
+.btn > span {
+    padding-bottom: 0;
+    padding-top: 0.2em;
+}
+
+
+/* item meta header — hover states
+------------------------------------------------------------------------------------------------------------------------ */
+
+.item:hover .meta-wrap .header, .item:hover .meta-wrap .sub-header {
+    color: #6e00af;
+}
+
+
+
+/* item meta header — removing white background from tablet breakpoint
+------------------------------------------------------------------------------------------------------------------------ */
+
+@media (max-width: 979px) {
+    #basic-promos .meta-wrap {
+        background-color: #f4f4f4;
+        padding: 5px;
+    }
+
+    #basic-promos .meta-wrap .label {
+        margin-left: 0;
+    }
+
+    #basic-promos .meta-wrap .header {
+        padding: 5px 0 0 0;
+    }
+}
+
+@media (max-width: 659px) {
+    #basic-promos .meta-wrap .label {
+        margin-left: -5px;
+    }
+}
+
+
+
+/* white dividing lines between items (for mobile only)
+------------------------------------------------------------------------------------------------------------------------ */
+
+@media (max-width: 659px) {
+    .video-block {
+        padding-top: 2rem;
+        border-top: 3px solid #fff;
+    }
+
+    .item .flag {
+        margin-top: 2rem;
+    }
+
+}
+
+
+
+/* section  headers
+------------------------------------------------------------------------------------------------------------------------ */
+
+/* main blue font color for section headers */
+[class*="section-header"] {
+    color: #48c0dd;
+}
+
+/* "emphasis" section headers with white text/blue backgrounds */
+span.section-header-emphasis {
+    background: #48c0dd;
+    display: inline-block;
+    color: #fff;
+    padding: .8rem 1.2rem .5rem;
+    font-size: 2rem;
+    letter-spacing: 0;
+}
+
+
+
+/* related shows area background pattern
+------------------------------------------------------------------------------------------------------------------------ */
+
+#related-shows {
+    border-top: 5px solid #e6e6e6;
+    background-image: url(../../../images/stripes.png);
+    background-repeat: repeat;
+    margin-bottom: -40px;
+}
+
+
+
+/* dropdown menu styles
+------------------------------------------------------------------------------------------------------------------------ */
+
+.dropdown-menu_container {
+    margin-top: 30px;
+    margin-bottom: 4px;
+}
+
+#dropdown-menu_btn {
+    background-color: #1a1a1a;
+    border-radius: 3px;
+    display: table-cell;
+    min-height: 45px;
+    padding: 8px 13px .6rem;
+    vertical-align: middle;
+    font-size: 2rem;
+    line-height:1.15;
+}
+
+#dropdown-menu_btn, #dropdown-menu_menu {
+    text-transform: uppercase;
+}
+
+#dropdown-menu_menu {
+    display: none;
+    position: absolute;
+    z-index: 5;
+    margin-top: -2px;
+    width: 100%;
+    background-color: #000;
+}
+
+#dropdown-menu_menu ul {
+    display: inline-block;
+    background-color: rgba(255,255,255,0.0);
+    width: 100%;
+    min-width: 180px;
+    margin-bottom: 0;
+}
+
+#dropdown-menu_menu ul li a {
+    display: block;
+    font-size: 1.7rem;
+    letter-spacing: .05rem;
+    font-weight: 400;
+    line-height: 1;
+    padding: 10px;
+}
+
+.menu-alt ul li a {
+    padding: 15px 10px 13px !important;
+}
+
+#dropdown-menu_menu ul li a:hover {
+    border-left: 0;
+    color: #fff;
+    background: rgba(255,255,255,.2);
+}
+
+a#dropdown-menu_btn:hover {
+    color: #fff;
+    background: #222;
+}
+
+.latest-full-episodes {
+    margin-top: -3px;
+}
+
+
+
+/* number of episodes flag — mobile sizing
+------------------------------------------------------------------------------------------------------------------------ */
+
+@media (max-width: 659px) {
+    .item.video-block .flag {
+        width: 1.5em;
+        top: 0;
+        left: 0;
+        padding-top: 0.14em;
+    }
+}
+
+
+
+/* adjustments for flipped header/subheader order
+------------------------------------------------------------------------------------------------------------------------ */
+
+.vdp-meta {
+    display: table;
+    table-layout: fixed;
+}
+
+#player-meta .sub-header {
+    font-size: 2.4rem;
+    line-height: 1.1;
+    font-weight: 700;
+    letter-spacing: 0.006em;
+    text-transform: capitalize;
+    margin-top: 0em;
+    display: table-header-group; /* this reverses the order of of the subheader without changing the html =] */
+}
+
+.latest-full-episodes .meta-wrap a {
+    display: table;
+    table-layout: fixed;
+}
+
+#player-meta .header {
+    font-size: 2.8rem;
+    font-weight: 900;
+    letter-spacing: 0.006em;
+    text-transform: capitalize;
+    margin-top: 0.1em;
+}
+
+.meta-wrap {
+    display: table;
+    table-layout: fixed;
+}
+
+.item .meta-wrap {
+    padding-top: .8rem;
+}
+
+.item .meta-wrap .deck {
+    margin-top: 0.2em;
+}
+
+.item .meta-wrap .header {
+    margin-top: 0.2em;
+}
+
+.item .meta-wrap .sub-header {
+    display: table-header-group;
+    margin-top: .4em;
+}
+
+@media (max-width: 659px){
+    .item.video-block .meta-wrap {
+        display: table;
+        table-layout: fixed;
+    }
+
+    .item .meta-wrap .meta {
+        margin-top: 0;
+    }
+}
+
+
+
+/* button style - mail
+------------------------------------------------------------------------------------------------------------------------ */
+
+.btn-mail {
+    -moz-box-shadow: 1px 1px 0 1px #000;
+    -webkit-box-shadow: 1px 1px 0 1px #000;
+    box-shadow: 1px 1px 0 1px #000;
+    width: auto;
+    position: relative;
+}
+
+.btn-social {
+    font-size: 2.5rem;
+}
+
+.btn-social:last-child {
+    margin-left: 0;
+    font-size: 2.5rem;
+}
+
+span.icon-mail {
+    margin-right: 12px;
+}
+
+
+
+/* button style - mail
+------------------------------------------------------------------------------------------------------------------------ */
+
+.date-today {
+    margin: 20px 0 0px;
+}
+
+
+
+/* tv listing styles
+------------------------------------------------------------------------------------------------------------------------ */
+
+.date-header {
+    background-image: url(../../../images/stripes-dark.png);
+    background-repeat: repeat;
+    /*border-top: 5px solid #e6e6e6;*/
+}
+
+.show-header {
+    max-height: 435px;
+    margin-bottom: 10px;
+    color: white;
+    background-image: url(../../../images/stripes-blue-lt.png);
+    background-repeat: repeat;
+}
+
+.show-header-image {
+    max-height: 435px;
+    margin-bottom: 10px;
+    color: white;
+    background-image: url(../../../images/nicoleA.jpg);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.premiere,
+.premiere-alt {
+    position: relative;
+}
+
+.premiere-alt:before {
+    overflow: hidden;
+    text-indent: -9999rem;;
+    font-size: 0;
+    line-height: 0;
+    background-size: 100%;
+    background-image:
+        linear-gradient(90deg,
+            rgba(233, 150, 12, 1) 18%,
+            rgba(233, 150, 12, 0) 50%),
+        linear-gradient(90deg,
+            rgba(233, 150, 12, 0) 0%,
+            rgba(233, 150, 12, 0) 100%);
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.premiere:before {
+    overflow: hidden;
+    text-indent: -9999rem;;
+    font-size: 0;
+    line-height: 0;
+    background-size: 100%;
+    background-image:
+        linear-gradient(90deg,
+            rgba(71, 192, 221, 1) 0%,
+            rgba(71, 192, 221, 0) 100%),
+        linear-gradient(90deg,
+            rgba(71, 192, 221, .5) 0%,
+            rgba(71, 192, 221, .5) 100%);
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.show-title {
+    line-height: 1;
+    margin-top: .3em;
+}
+
+
+
+/* module tv schedule styles
+------------------------------------------------------------------------------------------------------------------------ */
+
+.muted {
+    color: rgba(0,0,0,.5);
+}
+
+footer .muted {
+    color: #666;
+}
+
+#schedule-promo .label {
+    padding: .2rem 0.7rem;
+}
+
+
+
+/* new nav styles (adjustments to base.css)
+------------------------------------------------------------------------------------------------------------------------ */
+
+.site_header .site_menu_wrapper,
+.site_header .show_menu_wrapper {
+  position: absolute;
+  top: 35px !important;
+  left: 0;
+  width: 100%;
+  line-height: 50px;
+  color: #ffffff;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+/*moves site_menu up when scrolled down*/
+.sticky_header_fix {
+    margin-top: -50px;
+}
+
+.site_header .top_outer {
+  z-index: 1000;
+  width: 100%;
+  background-color: #6e00af !important;
+  -webkit-transition: left 0.4s cubic-bezier(0.17, 0.67, 0.59, 1.21);
+  transition: left 0.4s cubic-bezier(0.17, 0.67, 0.59, 1.21);
+}
+
+.site_header .bottom_outer {
+  width: 100%;
+  background: #842dbb !important;
+  height: 50px;
+}
+
+.site_header .logo .icon:before,
+.site_header .site_logo .icon:before {
+  content: "\e610" !important;
+  font-family: 'vh1' !important;
+}
+
+@media (max-width: 640px){
+    .site_header .logo .icon, .sticky_header .site_header .logo .icon, .site_header .site_logo .icon, .sticky_header .site_header .site_logo .icon {
+        font-size: 37px !important;
+        line-height: 41px;
+    }
+}
+
+@media (min-width: 979px){
+    .ent_m066 .site_header .logo {
+        margin-left: 15px !important;
+    }
+}
+
+@media screen and (max-width: 1024px){
+    .ent_m066 .site_header .bottom_outer {
+        display: none;
+    }
+
+    .ent_m066.module {
+        height: 40px !important;
+    }
+}
+
+.site_header .show_menu > li.social a,
+.site_header .main_nav > li.social a,
+.site_header .show_menu > li.social .top_flux_userbar,
+.site_header .main_nav > li.social .top_flux_userbar {
+  display: inline-block;
+  font-size: 18px !important;
+  -webkit-transition: all 0.7s cubic-bezier(0.7, 0, 0.3, 1);
+  transition: all 0.7s cubic-bezier(0.7, 0, 0.3, 1);
+  vertical-align: top;
+}
+
+.main_nav .icon-chevron-down {
+    font-size: 12px !important;
+    padding-left: 5px;
+}
+
+.site_header .site_menu_wrapper .site_menu_inner, .site_header .show_menu_wrapper .site_menu_inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-left: 31px;
+}
+
+.site_header .main_nav > li .menu_dropdown > div .sidea .links {
+    float: left;
+    margin-bottom: 10px;
+    padding-left: 15px;
+}
+
+.search_wrapper .icon-search {
+    position: relative;
+    top: 15px;
+    left: 18px;
+}
+
+@media (max-width: 640px){
+    .search_wrapper .icon-search {
+        position: relative;
+        top: 10px;
+        left: 10px;
+    }
+}
+
+.site_header .main_nav > li > a {
+      position: relative;
+      padding: 0 20px;
+      text-transform: uppercase !important;
+}
+
+.site_header .main_nav > li .menu_dropdown > div .sidea .column > a {
+    font-family: "Proxima Nova", arial, sans-serif !important;
+      float: left;
+      width: 100%;
+      text-decoration: none;
+      color: #ccc !important;
+      font-weight: bold !important;
+      font-size: 16px !important;
+      letter-spacing: .5px;
+      line-height: 25px;
+      padding: 12px 0;
+      position: relative;
+      text-align: left;
+      -webkit-transition: all 0.7s cubic-bezier(0.7, 0, 0.3, 1);
+      transition: all 0.7s cubic-bezier(0.7, 0, 0.3, 1);
+      text-transform: uppercase;
+}
+
+.site_header .main_nav > li .menu_dropdown > div .sidea .column > a:hover {
+      color: #fff !important;
+}
+
+.menu_dropdown .btn {
+    line-height: 30px !important;
+}
+
+.menu_dropdown .btn span {
+    font-family: "Proxima Nova", arial, sans-serif !important;
+    font-size: 1.8rem !important;
+}
+
+
+
+
+
+
+
+

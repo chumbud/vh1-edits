@@ -1,0 +1,12 @@
+body { padding-top: 150px;}
+.navbar { position: fixed; width: 100%; top: 0;}
+
+body.relative .navbar { position: relative; opacity: 1 !Important; }
+
+body.relatively { padding-top: 0; }
+body.relatively .navbar { margin-top: 0 !Important; position: relative; opacity: 1 !Important;}
+
+@media (max-width: 979px ) {
+	body { padding-top: 110px;}	
+	body.relative { padding-top: 151px;}
+}

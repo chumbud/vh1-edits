@@ -1,0 +1,12 @@
+/* Transitions ------------------*/
+.collapse {
+	height: 0;
+    overflow: hidden;
+     -webkit-transition: height 1s;
+	transition: height 1s;
+}
+.collapse.in {
+	height: 300px;
+    -webkit-transition: height 2s;
+	transition: height 2s;
+}

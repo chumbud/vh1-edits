@@ -1,0 +1,354 @@
+
+/* Controller.js */
+$Crabapple.TriforceModule_reporting_v1 = function() {};
+$Crabapple.extend($Crabapple.TriforceModule, $Crabapple.TriforceModule_reporting_v1, {
+    visibleLeaderboardClass : '',
+    leaderboardTimeout: null,
+    refireReportingCalls: false,
+    boxAdQueue: [],
+    initializeView: function() {
+        var _this = this;
+        $('body').off('triforce:reportingLoadSingleAd');
+
+        this.getRepoCall();
+        $('#ads-reporting').remove();
+        this.attachLeaderboardEvents();
+		if (window.Triforce.config && typeof(window.Triforce.config.moduleTrackingEnabled) != 'undefined') this.fireModuleTracking();
+
+        $('body').on('triforce:reportingLoadSingleAd', function(event, adElement) {
+            _this.placeAd($(adElement));
+        })
+    },
+    attachLeaderboardEvents: function() {
+        window.Triforce.getMediator().on('triforce:pagestartload', function() {
+            $('#leaderboard,#leaderboard_mobile,.leaderboard.mobile').empty();
+			$('#leaderboard,#leaderboard_mobile,.leaderboard.mobile').addClass('empty');
+        });
+    },
+    getRepoCall: function() {
+        var self = this,
+            repoUrl = config.getRepoReportingUrl(),
+            baseHref = config.getSiteBaseHREF(),
+            currentUrl = window.location.href,
+            makeRepoSearchCall = false;
+        
+        currentUrl = currentUrl.replace(window.location.search, '');
+        
+        var    repoCallUrl = repoUrl + '?url=' + encodeURIComponent(currentUrl.replace(baseHref, '/'))
+            + '&cmsPageId=' + triforceManifestFeed.id
+            + '&pageType=' + triforceManifestFeed.type;
+        for(var i in triforceManifestFeed.reporting){
+            repoCallUrl += '&'+i+'='+triforceManifestFeed.reporting[i];
+        }
+
+        if (triforceManifestFeed.repo) {
+            for (var i in triforceManifestFeed.repo) {
+                if (i == 'search') {
+                    makeRepoSearchCall = true;
+                }
+                else {
+                    repoCallURL += '&' + encodeURIComponent(i) + '=' + encodeURIComponent(triforceManifestFeed.repo[i]);
+                }
+            }
+        }
+        this.refireReportingCalls = false;
+        if (!window.Triforce.getMediator().initialLoad()) {
+            this.refireReportingCalls = true;
+        }
+
+        this.boxAdQueue = [];
+        
+        if (makeRepoSearchCall === true) {
+            this.makeRepoSearchCall(triforceManifestFeed.reporting.search, function() {
+                self.makeRepoCalls(repoCallUrl);
+            });
+        } else {
+            this.makeRepoCalls(repoCallUrl);
+        }
+    },
+    placeAds: function() {
+        var self = this;
+        $('[data-adsize]').each(function() {
+            self.placeAd($(this));
+        });
+
+        this.addBoxAdEvents();
+        this.checkBoxAds();
+    },
+    placeAd: function(elm) {
+        var currentMediaQuery = 'desktop';
+
+        //overrides to ensure we don't show desktop ads on mobile
+        var useragent = navigator.userAgent.toLowerCase();
+        if (useragent.indexOf('iphone') > -1 || (useragent.indexOf('android') > -1 && useragent.indexOf('mobile') > -1 )){
+            currentMediaQuery = 'mobile';
+        } else if (useragent.indexOf('ipad') > -1 || useragent.indexOf('android') > -1){
+            currentMediaQuery = 'tablet';
+        }
+
+        //override for when we have a screen size that cannot fit the 728 ads on the tablet
+        if(currentMediaQuery == "tablet" &&  (screen.width < 728 || screen.height < 728)){
+            currentMediaQuery = "mobile";
+        }
+
+        if (typeof (mtvn) == 'undefined' || typeof (mtvn.btg) == 'undefined') {
+            // Wait until coda is initialized
+            return;
+        }
+
+        //cleaning out the old ads if any exist
+        elm.empty();
+		if (elm.hasClass('empty')) elm.removeClass('empty');
+        
+        var adSize = elm.attr('data-adsize'),
+            allowOnTablet = elm.attr('data-allowontablet'),
+            isOPAAd = false;
+        $Crabapple.repo._log("processing ad size: "+adSize);
+        if (adSize.indexOf("970x66") === 0) {
+            isOPAAd = true;
+        }
+        
+        allowOnTablet = (allowOnTablet == "true");
+
+        if ((adSize == '728x90' || adSize.indexOf("970x66") > -1) && currentMediaQuery == 'desktop') {
+            //desktop banner ads handling
+
+            //opa banner ad only shows on the homepage of our websites
+			if (triforceManifestFeed.CMSTitle && (triforceManifestFeed.CMSTitle == 'Homepage')) {
+                if (triforceManifestFeed.parameters.desktopBannerAd) {
+                    adSize = triforceManifestFeed.parameters.desktopBannerAd;
+                    elm.attr('data-adsize', adSize);
+                }
+            }else{
+                //every other page should have this ad size
+                adSize = '728x90';
+                elm.attr('data-adsize',adSize);
+            }
+            //remove styles as this is used to sometimes hide the element or have additional styling that shouldn't exist
+            elm.removeAttr('style');
+
+        }else if ((adSize == '728x90' || adSize.indexOf("970x66") > -1) && currentMediaQuery == "mobile") {
+            //remove the opa leaderboard ad on phones
+            adSize = '0';
+
+        }else if (adSize.indexOf("970x66") > -1 && currentMediaQuery == 'tablet'){
+            //tablets always get the 728x90 ad leaderboards
+            adSize = '728x90';
+            elm.attr('data-adsize',adSize);
+            //remove styles as this is used to sometimes hide the element or have additional styling that shouldn't exist
+            elm.removeAttr('style');
+
+        }else if (adSize == '300x250') {
+            //box ads
+            if (currentMediaQuery == "mobile" && config.getRepoBoxAdMobile && (config.getRepoBoxAdMobile() == 'true' || config.getRepoBoxAdMobile() == '1')) {
+                //override for box ads on mobile
+                this.boxAdQueue.push(elm);
+
+            } else if (currentMediaQuery == "tablet" && config.getRepoBoxAdTablet && (config.getRepoBoxAdTablet() == 'true' || config.getRepoBoxAdTablet() == '1')) {
+                //override for box ads on mobile
+                this.boxAdQueue.push(elm);
+
+            } else if ( allowOnTablet && currentMediaQuery == "tablet" ) {
+                //override for specific tablet box ads but not all of them on a site
+                this.boxAdQueue.push(elm);
+
+            } else if ((!allowOnTablet && currentMediaQuery == "tablet") || (currentMediaQuery == "mobile")) {
+                //disable box ads on mobile
+                this.removeBoxAd(elm);
+
+            } else {
+                this.boxAdQueue.push(elm);
+            }
+            return;
+
+        }else if (adSize.indexOf('300x50') > -1 && currentMediaQuery != 'mobile') {
+            //remove the mobile leaderboard ad on non-phones
+            adSize = '0';
+        }
+
+        if (typeof (allKeyString) == 'undefined') {
+            var allKeyString = '';
+        }
+
+        //set the ad size
+        if(elm.attr('data-adsize') == 0 || adSize == '0'){
+            //ignore bad ads
+            elm.removeAttr('data-ad-sizes');
+            elm.hide();
+            return;
+        }
+
+        //handle key value sponsor for coda
+        if (!elm.attr('data-campaign')) {
+            if (triforceManifestFeed.reporting && triforceManifestFeed.reporting.sponsorship) {
+                elm.attr('data-campaign', triforceManifestFeed.reporting.sponsorship.campaignID);
+            }
+        }
+
+        //map the triforce data attribute onto the one used by coda
+        elm.attr('data-ad-sizes',elm.attr('data-adsize'));
+        
+        //setup the keyvalues
+        var keyValues = elm.attr('data-keys');
+        var campaignValue = elm.attr('data-campaign');
+        if(campaignValue){
+            //sponsor=
+            if(keyValues){
+                keyValues += ",sponsor="+campaignValue;
+            } else {
+                keyValues = "sponsor="+campaignValue
+            }
+        }
+        if(keyValues) {
+            elm.attr('data-ad-keyvalues', keyValues);
+        }
+        
+        //place ad (convert back to domElement)
+        $Crabapple.repo.loadSingleAd(elm[0]);
+    },
+    makeRepoCalls: function(repoUrl) {
+        var self = this;
+        if (typeof(mtvn) == 'undefined' || typeof(mtvn.btg) == 'undefined') {
+            self.makeRepoCall(repoUrl);
+        } else {
+            //need this to ensure the ad placement is reset correctly for new pages
+            btg.config.DoubleClick.tile=1;
+            mtvn.btg.Controller.init();
+            self.makeRepoCall(repoUrl);
+        }
+    },
+    makeRepoCall: function(repoUrl) {
+        var self = this;
+
+        $.ajaxSetup({cache:true});
+        
+        $Crabapple.repo.init(config.getRepoCodaUrl(), repoUrl, false);
+        //fire off the on coda loaded event to auto load the ads and send out the page tracking
+        $Crabapple.repo.doFullPageLoadWithCustomAdFunc(function(){
+            self.placeAds();
+        });
+    },
+    makeRepoSearchCall: function(search, callback) {
+        var searchURL = config.getRepoSearchReportingUrl();
+        searchURL += JSON.stringify(search);
+        $.getScript(searchURL).done(callback);
+    },
+    makeCodaCall: function(callback) {
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = config.getRepoCodaUrl();
+        script.async = true;
+        script.onload = function(_,isAbort) {
+            if (!script.readyState || /loaded|complete/.test(script.readyState)) {
+                if (isAbort) {
+                    return;
+                }
+                else {    
+                    var c = $.Callbacks();
+                    c.add(callback);
+                    c.fire();
+                }
+            }
+        };
+        document.head.appendChild(script);
+    },
+    isMobile: function() {    
+        return window.Triforce.getMediator().isMobile();
+    },
+    removeBoxAd: function(elm) {
+        $Crabapple.repo._log("removeBoxAd called");
+        $Crabapple.repo._log("removing ad size: "+size);
+        var module = elm.parent(),
+            column = module.parent();
+        
+        elm.remove();
+        if (module.hasClass('module')) {
+            module.remove();
+            if (column.children('div').length == 0) {
+                // This column is now empty
+                var tier = column.parent(),
+                    tierClass = column.attr('class');
+                column.remove();
+                
+                if (tierClass = 'tier_2_col') {
+                    tier.removeClass('tier_2_col');
+                }
+                
+            }
+        }
+    },
+    addBoxAdEvents: function() {
+        var self = this;
+        $(window).on('scroll', function(e) {
+            if (!self.buffer) {
+                self.buffer = setTimeout(function() {
+                    self.checkBoxAds(e);
+                    self.buffer = null;
+                }, 300);
+            }
+        });
+    },
+    checkBoxAds: function(event) {
+        for (var i in this.boxAdQueue) {
+            var boxAd = this.boxAdQueue[i];
+            if (this.isInView(boxAd)) {
+                this.boxAdQueue[i] = null;
+                this.placeBoxAd(boxAd);
+            }
+        }
+    },
+    isInView: function(elm) {
+        if (elm == null) return false;
+
+		elm = elm[0] || elm; // in case if elm is jquery wrap
+        var elRect = elm.getBoundingClientRect(),
+			wWidth = window.innerWidth,
+			wHeight = window.innerHeight,
+			hasRect = elRect.bottom || elRect.height || elRect.left || elRect.right || elRect.top || elRect.width;
+
+        return hasRect && elRect.top >= 0 && elRect.left >= 0 && elRect.right <= wWidth && elRect.bottom <= wHeight + elRect.height;
+    },
+    placeBoxAd: function(elm) {
+        //set the ad size
+        if(elm.attr('data-adsize') == 0){
+            //ignore bad ads
+            return;
+        }
+        elm.attr('data-ad-sizes',elm.attr('data-adsize'));
+        
+        //setup the keyvalues
+        var keyValues = elm.attr('data-keys');
+        var campaignValue = elm.attr('data-campaign');
+        if(campaignValue){
+            //sponsor=
+            if(keyValues){
+                keyValues += ",sponsor="+campaignValue;
+            } else {
+                keyValues = "sponsor="+campaignValue
+            }
+        }
+        if(keyValues) {
+            elm.attr('data-ad-keyvalues', keyValues);
+        }
+        
+        //place ad (convert back to domElement)
+        $Crabapple.repo.loadSingleAd(elm[0]);
+    },
+    fireModuleTracking: function() {
+        if (typeof(config.getTriforceModuleTrackingScript) == 'function' && config.getTriforceModuleTrackingScript() != '') {
+			this.loadModuleTracking(config.getTriforceModuleTrackingScript(), config.getTriforceModuleTrackingDriver);
+        } else if (window.Triforce.config.moduleTrackingScript && window.Triforce.config.moduleTrackingDriver) {
+			this.loadModuleTracking(window.Triforce.config.moduleTrackingScript,window.Triforce.config.moduleTrackingDriver)
+		}
+    },
+	loadModuleTracking:function(script,driver) {
+		var driverSplit = driver.split('.');
+		if (typeof(window[driverSplit[0]][driverSplit[1]]) == 'function') {}
+		else {
+			$.getScript(window.Triforce.config.scriptConcatenator + script).done(function() {
+				var moduleTracker = new window[driverSplit[0]][driverSplit[1]]();
+				moduleTracker.addModuleTrackingEvents();
+			});
+		}
+	}
+});

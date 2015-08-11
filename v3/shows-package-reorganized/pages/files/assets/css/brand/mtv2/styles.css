@@ -1,0 +1,71 @@
+@import url('fonts.css');
+
+/* navbar -------------------------------------------- */
+.navbar .nav-top {
+	text-transform: lowercase;
+}
+
+
+/* buttons -------------------------------------------- */
+.btn {
+	background-color: #00bbef;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+    box-shadow: inset 0 2px rgba(255, 255, 255, 0.15);
+    text-transform: lowercase;
+}
+
+
+
+/* typography ----------------------------------------- */
+[class*="section-header"] {
+	text-transform: lowercase;
+}
+.section-header-1 {
+	color: #e62970;
+}
+.section-header-2 {
+	border-bottom: 5px solid #000;
+}
+.section-header-3 {
+	text-transform: lowercase;
+}
+
+
+
+/* item ----------------------------------------------- */
+.item .meta-wrap .header,
+.item .meta-wrap .sub-header {
+	text-transform: lowercase;
+}
+.item.special .meta-wrap {
+    background-color: #fff;
+    padding-top: 0.2em;
+    position: relative;
+    width: 85%;
+    margin-top: -4.4ex;
+    min-height: 4.4ex;
+}
+
+
+
+/* footer ----------------------------------------- */
+footer {
+	border-top: 5px solid #e1e1e1;
+}
+
+
+@media (max-width: 659px ) { 
+	.item.special .meta-wrap {
+		background-color: transparent;
+		padding-top: 0.5rem;
+		position: relative;
+		width: 100%;
+		margin-top: 0;
+		min-height: auto;
+	}	
+}
+
+
+/* ui kit ----------------------------------------- */
+.core, .vh1, .cmt, .logo { display: none; }
+.mtv { display: block; }
