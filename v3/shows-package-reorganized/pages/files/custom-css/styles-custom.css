@@ -575,6 +575,7 @@ footer .muted {
 /* new nav styles (adjustments to base.css)
 ------------------------------------------------------------------------------------------------------------------------ */
 
+
 .site_header .site_menu_wrapper,
 .site_header .show_menu_wrapper {
   position: absolute;
@@ -681,7 +682,6 @@ footer .muted {
       padding: 0 20px;
       text-transform: uppercase !important;
 }
-
 .site_header .main_nav > li .menu_dropdown > div .sidea .column > a {
     font-family: "Proxima Nova", arial, sans-serif !important;
       float: left;
@@ -711,6 +711,15 @@ footer .muted {
 .menu_dropdown .btn span {
     font-family: "Proxima Nova", arial, sans-serif !important;
     font-size: 1.8rem !important;
+}
+/*on hover chevron flippity*/
+.site_header .main_nav > li > a .icon-chevron-down {
+    transition: transform .2s ease-in-out;
+    padding-right: 5px;
+    display: inline-block;
+}
+.site_header .main_nav > li > a:hover .icon-chevron-down {
+    transform: rotate(180deg);
 }
 
 
