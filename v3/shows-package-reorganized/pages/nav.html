@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Series Cast</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<!--
+<link href="http://shared.mtv-d.mtvi.com/site/mtv/0.0/bundles/responsive/responsive_css_head.php" type="text/css" rel="stylesheet" media="screen, projection">
+<link rel="stylesheet" href="http://shared.mtv-d.mtvi.com/site/mtv/0.0/bundles/main-mobile/main-mobile_css_head.php" type="text/css" />  -->
+
+		<!-- train -->
+		<link href="files/assets/css/gridsystem.css" type="text/css" rel="stylesheet" media="screen, projection" />
+		<link href="files/assets/css/buttons.css" type="text/css" rel="stylesheet" media="screen, projection" />
+		<link href="files/assets/css/headingsbody.css" type="text/css" rel="stylesheet" media="screen, projection" />
+		<link href="files/assets/css/labelsmarkersflags.css" type="text/css" rel="stylesheet" media="screen, projection" />
+		<link href="files/assets/css/footer.css" type="text/css" rel="stylesheet" media="screen, projection" />
+		<link href="files/assets/css/icons.css" type="text/css" rel="stylesheet" media="screen, projection" />
+		<link href="files/assets/css/base.css" type="text/css" rel="stylesheet" media="screen, projection" />
+		<link href="files/assets/css/filters.css" type="text/css" rel="stylesheet" media="screen, projection" />
+		<link href="files/assets/css/utilities.css" type="text/css" rel="stylesheet" media="screen, projection" />
+		<link href="files/assets/css/layouts.css" type="text/css" rel="stylesheet" media="screen, projection" />
+		<link href="files/assets/css/type.css" type="text/css" rel="stylesheet" media="screen, projection" />
+		<link href="files/assets/css/dropdowns.css" type="text/css" rel="stylesheet" media="screen, projection" />
+		<link href="files/assets/css/transitions.css" type="text/css" rel="stylesheet" media="screen, projection" />
+
+		<link href="files/assets/css/md-utilities.css" type="text/css" rel="stylesheet" media="screen, projection" />
+		<link href="files/assets/css/md-layouts.css" type="text/css" rel="stylesheet" media="screen, projection" />
+		<link href="files/assets/css/md-gridsystem.css" type="text/css" rel="stylesheet" media="screen, projection" />
+
+		<link href="files/assets/css/sm-utilities.css" type="text/css" rel="stylesheet" media="screen, projection" />
+		<link href="files/assets/css/sm-layouts.css" type="text/css" rel="stylesheet" media="screen, projection" />
+		<link href="files/assets/css/sm-gridsystem.css" type="text/css" rel="stylesheet" media="screen, projection" />
+
+		<!-- beta -->
+		<link href="files/assets/css/navbar.css" type="text/css" rel="stylesheet" media="screen, projection" />
+		<link href="files/assets/css/brand/vh1/styles.css" type="text/css" rel="stylesheet" media="screen, projection" />
+		<!--link href="files/assets/css/nav-banner-ad.css" type="text/css" rel="stylesheet" media="screen, projection" /-->
+
+		<!-- plugins -->
+		<link href="files/assets/css/metaframe.css" type="text/css" rel="stylesheet" media="screen, projection" />
+		<meta name="metaframe-csv" content="php-example.csv"/>
+		<meta name="metaframe-form" content="metaframe-form-submit.php"/>	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<!--
+<link href="http://shared.mtv-d.mtvi.com/site/mtv/0.0/bundles/responsive/responsive_css_head.php" type="text/css" rel="stylesheet" media="screen, projection">
+<link rel="stylesheet" href="http://shared.mtv-d.mtvi.com/site/mtv/0.0/bundles/main-mobile/main-mobile_css_head.php" type="text/css" />
+-->
+
+		<!-- train -->
+		<script src="files/assets/js/jquery-191.js" type="text/javascript"></script>
+		<script src="files/assets/js/transition.js" type="text/javascript"></script>
+		<script src="files/assets/js/dropdown.js" type="text/javascript"></script>
+		<!--<script src="files/assets/js/metaframe.js" type="text/javascript"></script>-->
+		<!--script src="files/assets/js/collapse.js" type="text/javascript"></script-->
+		<!--script src="files/assets/js/nav-banner-ad.js" type="text/javascript"></script-->
+
+		<!-- beta -->
+		<script src="files/assets/js/liga.js" type="text/javascript"></script>
+
+
+		<link media="screen, projection" rel="stylesheet" type="text/css" href="files/custom-css/styles-shows-arc.css">
+		<link media="screen, projection" rel="stylesheet" type="text/css" href="files/custom-css/styles-shows-full-episodes.css">
+		<link media="screen, projection" rel="stylesheet" type="text/css" href="files/custom-css/styles-hub-full-episodes.css">
+
+		<!-- custom additions -->
+		<link media="screen, projection" rel="stylesheet" type="text/css" href="files/custom-css/styles-custom.css">
+		<link media="screen, projection" rel="stylesheet" type="text/css" href="files/custom-css/vh1-fonts.css">
+		<link media="screen, projection" rel="stylesheet" type="text/css" href="files/custom-css/icons.css">
+		<link media="screen, projection" rel="stylesheet" type="text/css" href="files/custom-css/base.css">
+		<script src="files/custom-js/base.js" type="text/javascript"></script>
+		<script src="files/custom-js/sticky-nav.js" type="text/javascript"></script>
+
+		<script src="files/assets/js/modernizr.custom.js"></script>
+		<link rel="stylesheet" type="text/css" href="files/assets/css/component.css" />
+
+
+		<style>
+			.item-cast { margin-bottom: 50px; font-size: 2.3rem; padding: 0 7px; }
+			.item-cast .media { position: relative;}
+			.item-cast .item-container, .btn-social, .btn-social span { border-radius: 100%; }
+			.item-cast .item-container::before { padding-top: 100%; }
+			.item-cast [class*="container"] > .content img { height: 100%; width: auto;}
+
+			.item-cast .media .btn { position: absolute; right: 14%; bottom: 2px; width: 50px; height: 50px;}
+			.item-cast .media .btn ~ .btn { right: -1%; bottom: 47px; }
+
+			.item-cast .meta-wrap { margin-top: 10px; border-top: 1px solid black; padding-top: 10px; }
+			.item-cast .meta-wrap .sub-header { font-weight: 400; }
+			.item-cast .meta-wrap .header { font-weight: 700; }
+
+			#cast { padding-top: 20px; }
+
+
+
+			#cast .col-lg-3 { position: inherit; }
+
+			@media screen and (max-width: 659px) {
+				.og-fullimg { display: none; }
+				.og-details { float: none; width: 100%; }
+
+				.item-cast { font-size: 5.4vw; padding: 0; margin-bottom: 15px;}
+				.item-cast .media { width: 100%; max-width: 33.33%; float: left; margin-right: 15px; }
+				.item-cast .meta-wrap { border-top: none; }
+
+				.og-expander { margin-top: 0; }
+				.og-grid li.og-expanded > a::after { margin-top: -30px; margin-left: 10%; }
+			}
+		</style>
+	</head>
+	<body>
+		<div class="page-content">
+			<style>
+				.navbar + #dropdown-menu_menu { display: none; height: 0; overflow: hidden;}
+				.navbar.sticky-icky + #dropdown-menu_menu { height: auto; overflow: visible; position: fixed; z-index: 5; width: 100%; top: 50px; }
+				#dropdown-menu_menu ul { display: inline-block; background-color: #1a1a1a; width: 100%; min-width: 180px; max-width: 280px; margin-bottom: 0; float: right; margin-right: 37px;}
+				#dropdown-menu_menu ul li a { display: block; font-size: 2rem; font-weight: 700; line-height: 1; padding: 10px; text-transform: lowercase;}
+
+				.navbar, .navbar-inner, .navbar-inner .container #nav-bottom .nav-collapse .nav, #dropdown-menu_menu ul { background-color: #00bbef; }
+				.navbar, .navbar-inner, .navbar-inner .container #nav-bottom .nav-collapse .nav,
+				.navbar a, .navbar-inner .container #nav-top .search_wrapper form input, .navbar-inner .container #nav-top .search_wrapper .search_btn, #dropdown-menu_menu ul a { color: #fff; }
+
+				.navbar .navbar-inner.primary .container #nav-top .navbar_dropdown-button { font-size: 2rem; padding: 0 15px; border-left: 1px solid rgba(255, 255, 255, 0.4); }
+				.navbar .navbar-inner.primary .container #nav-top .navbar_dropdown-button #dropdown-menu_btn { padding-top: 7px; }
+				.navbar .navbar-inner.primary .container #nav-top .navbar_dropdown-button #dropdown-menu_btn .icon-chevron-down { font-size: 0.85em; margin-left: 2px; }
+
+				#dropdown-menu_menu ul { padding: 0 0 15px; }
+				#dropdown-menu_menu ul li a { width: 100%; display: block; padding-left: 30px; line-height: 1.3; }
+				#dropdown-menu_menu ul li a:hover { opacity: 0.75; }
+				#dropdown-menu_menu ul li a.active { background-color: rgba(255,255,255,0.3); }
+				#dropdown-menu_menu ul li.social { padding: 30px 0 15px; margin-top: 10px; margin-left: 30px; border-top: 5px solid rgba(255, 255, 255, 0.3);  }
+				#dropdown-menu_menu ul li.social a { border-radius: 100%; border: 1px solid #fff; padding: 10px 10px 6px; margin-right: 5px; display: inline; font-size: 1.6rem; }
+				#dropdown-menu_menu ul li.social a:hover { opacity: 0.75; }
+				#dropdown-menu_menu ul li.social a:last-child { margin-right: 13px; }
+
+
+				@media (min-width: 980px) {
+					.navbar-inner .container #nav-bottom .nav-collapse { display: block !important; }
+					.navbar-inner .container #nav-bottom .nav-collapse .nav li:first-child { float: left;  }
+				}
+
+
+				@media (max-width: 979px) {
+					.navbar-inner.primary .container #nav-top .navbar_dropdown-button,
+					.navbar-inner .container #nav-top .search_wrapper form {
+						display: none;
+					}
+					.navbar-inner .container #nav-top .title {
+						padding: 0 5px;
+					}
+					.navbar-inner .container #nav-top .search_wrapper {
+						width: 50px;
+					}
+					.navbar-inner.secondary .container #nav-bottom .btn-navbar {
+						display: table;
+						width: 100%;
+						padding: 0 10px;
+						text-align: left;
+						height: 50px;
+						font-size: 2.0rem;
+						margin-top: 0;
+					}
+					.navbar-inner.secondary .container #nav-bottom .btn-navbar .heading {
+						display: table-cell;
+						vertical-align: middle;
+					}
+					.navbar-inner.secondary .container #nav-bottom .btn-navbar .icon-chevron-down {
+						text-align: right;
+						font-size: 0.9em;
+					}
+					.navbar-inner .container #nav-bottom .nav-collapse {
+						display: none;
+					}
+					.navbar-inner .container #nav-bottom .nav-collapse .nav {
+						padding-bottom: 15px;
+						border-top: 1px solid rgba(255, 255, 255, 0.35);
+					}
+					.navbar.sticky-icky .secondary {
+						overflow: visible;
+						position: fixed;
+						top: 50px;
+						width: 100%;
+					}
+					.navbar-inner .container #nav-bottom .nav-collapse .nav li {
+						display: block;
+					}
+					.navbar-inner .container #nav-bottom .nav-collapse .nav li a {
+						display: block;
+						padding: 0 10px;
+						line-height: 50px;
+					}
+					.navbar.sticky-icky + #dropdown-menu_menu {
+						display: none !important;
+					}
+					.navbar-inner .container #nav-bottom .nav-collapse .nav .social {
+						border-top: 5px solid rgba(255, 255, 255, 0.3);
+						height: 65px;
+						margin-left: 10px;
+						margin-top: 5px;
+						padding-top: 15px;
+						position: relative;
+					}
+					.navbar-inner .container #nav-bottom .nav-collapse {
+						position: absolute;
+						z-index: 5;
+						margin-top: 50px;
+					}
+					.navbar-inner .container #nav-bottom .nav-collapse .nav li.social a {
+						display: inline;
+						padding: 9px 10px 6px;
+					}
+
+				}
+
+				@media (max-width: 659px) {
+					.navbar-inner .container #nav-top .title a {
+						padding-bottom: 10px;
+						vertical-align: bottom;
+					}
+				}
+
+			</style>
+			<div class="navbar">
+				<div id="ad-container">
+					<div class="container">
+						<div class="banner-container seven-twenty-eight ad" data-filter="ad">
+							<div class="ad-container loaded" data-refresh="true" data-device="desktop,tablet" data-ad="728x90">
+								<img src="../images/728x90.jpg" >
+							</div><!-- /ad-container -->
+						</div><!-- /banner-container -->
+						<div class="banner-container three-hundred ad" data-filter="ad">
+							<div class="ad-container loaded" data-refresh="true" data-device="desktop,tablet" data-ad="300x50">
+								<img src="../images/300x50.jpg" >
+							</div><!-- /ad-container -->
+						</div><!-- /banner-container -->
+					</div><!-- /container -->
+				</div><!-- /ad-container -->
+
+				<div id="header" data-zone="header" class="module ent_m066 un_sticky_header" data-tfstatic="true" data-tflibs="ENT_M066_MTV" style="display:block;" data-tfmethod="triforce_v1" data-tffeed="http://relaunch.mtv-d.mtvi.com/feeds/ent_m066_mtv/V1_0_0/0c597918-ef3d-40dc-87c5-b9340a7f8bdf">
+
+					<div class="site_header">
+						<div class="top_outer">
+							<div class="top_inner">
+								<div class="menu_holder">
+									<div class="hamburger" id="trigger">
+										<span class="icon"></span>
+										<span class="screen-reader-text">VH1 Menu</span>
+									</div>
+									<div class="site_logo">
+										<span data-graphics="A" class="icon"></span>
+										<span class="screen-reader-text">VH1</span>
+									</div>
+									<div class="slide_menu">
+										<div class="search">
+											<form id="side_search" action="http://www.vh1.com/search">
+												<input type="text" class="search_input" name="searchKeywords" placeholder="Search">
+												<input type="submit" value="M" class="search_btn">
+											</form>
+										</div>
+										<ul class="side_navigation">
+											<li>
+												<a href="http://www.vh1.com/">VH1 Home</a>
+											</li>
+											<li class="shows">
+												<a href="./mtv-shows_files/mtv-shows.html" class="has_arrow notriforce" data-graphics-after="V">Shows</a>
+												<div class="sub_entries">
+													<ul>
+														<li>
+															<a href="http://relaunch.mtv-d.mtvi.com/videos">Full Episodes</a>
+														</li>
+														<li>
+															<a href="http://www.mtv.com/shows">Shows A-Z</a>
+														</li>
+														<li>
+															<a href="http://relaunch.mtv-d.mtvi.com/news/tv/">Shows News</a>
+														</li>
+														<li>
+															<a href="http://soundtrack.mtv.com/">Music from the Shows</a>
+														</li>
+														<li>
+															<a href="http://remotecontrol.mtv.com/casting-calls/">Casting Calls</a>
+														</li>
+													</ul>
+													<a href="./mtv-shows_files/mtv-shows.html" class="see_all">See all Shows</a>
+												</div>
+											</li>
+											<li class="music">
+												<a href="http://www.mtv.com/music/" class="has_arrow notriforce" data-graphics-after="V">Music</a>
+												<div class="sub_entries">
+													<ul>
+														<li>
+															<a href="http://www.mtv.com/music/">Music</a>
+														</li>
+														<li>
+															<a href="http://www.mtv.com/artists/">Artists A-Z</a>
+														</li>
+														<li>
+															<a href="http://www.mtv.com/music/videos/">Music Videos</a>
+														</li>
+														<li>
+															<a href="http://www.mtv.com/artists/collections/artists-to-watch/896317/">Artist to Watch</a>
+														</li>
+														<li>
+															<a href="http://www.mtv.com/music/hiphop/">Hip Hop</a>
+														</li>
+													</ul>
+													<a href="http://www.mtv.com/music/" class="see_all">See all Music</a>
+												</div>
+											</li>
+											<li class="news">
+												<a href="http://www.mtv.com/news/" class="has_arrow notriforce" data-graphics-after="V">News</a>
+												<div class="sub_entries">
+													<ul>
+														<li>
+															<a href="http://www.mtv.com/news/">Latest News</a>
+														</li>
+														<li>
+															<a href="http://www.mtv.com/news/music/">Music</a>
+														</li>
+														<li>
+															<a href="http://www.mtv.com/news/celebrity/">Celebrity</a>
+														</li>
+														<li>
+															<a href="http://www.mtv.com/news/tv/">TV</a>
+														</li>
+														<li>
+															<a href="http://www.mtv.com/news/movies/">Movies</a>
+														</li>
+														<li>
+															<a href="http://www.mtv.com/news/style/">Style</a>
+														</li>
+														<li>
+															<a href="http://www.mtv.com/news/life/">Life</a>
+														</li>
+														<li>
+															<a href="http://www.mtv.com/news/issues/">Issues</a>
+														</li>
+													</ul>
+													<a href="http://www.mtv.com/news/" class="see_all">See all News</a>
+												</div>
+											</li>
+											<li class="provider_signout" style="display:none;">TV Provider Sign Out</li>
+											<li class="login">
+												<span class="flux4Widget flux4"><div class="userBar sm4_userBar" data-version="4210"><div><div class="authContainer withThumbnail">
+													<div class="actionButton loggedOut sm4IconUser"><span class="label">Sign In</span></div>
+													</div></div></div></span>
+											</li>
+											<li class="social">
+												<a href="http://www.facebook.com/MTV" target="_blank" >
+													<span data-graphics="N" class="icon"></span>
+													<span class="screen-reader-text">facebook</span>
+												</a>
+												<a href="https://twitter.com/MTV" target="_blank" class="notriforce">
+													<span data-graphics="O" class="icon"></span>
+													<span class="screen-reader-text">twitter</span>
+												</a>
+												<a href="http://mtv.tumblr.com/" target="_blank" class="notriforce">
+													<span data-graphics="Q" class="icon"></span>
+													<span class="screen-reader-text">tumblr</span>
+												</a>
+											</li>
+										</ul>
+									</div>
+									<div class="page_overlay"></div>
+								</div>
+								<a class="logo" href="http://relaunch.mtv-d.mtvi.com/">
+									<span data-graphics="@" class="icon"></span>
+								</a>
+								<div class="full_logo_wrapper">
+									<div class="logo_anim">
+									</div>
+								</div>
+								<div class="search_wrapper">
+									<div class="form_containment" id="site_search">
+										<form action="http://relaunch.mtv-d.mtvi.com/search">
+											<input type="text" name="searchKeywords" class="search_input" placeholder="Search">
+											<span class="icon-search"></span>
+											<div class="preload_wrapper"></div>
+										</form>
+									</div>
+									<div class="hide_search" data-graphics="W"></div>
+								</div>
+							</div>
+							<div class="site_menu_wrapper">
+								<div class="site_menu_inner">
+									<ul itemtype="http://www.schema.org/SiteNavigationElement" class="main_nav">
+										<!--
+<li class="active">
+<a href="./mtv-shows_files/mtv-shows.html" data-link="shows">Shows<span class="icon-chevron-down"></span></a>
+<div class="menu_dropdown shows">
+<div>
+<div class="sidea wide">
+<div class="links">
+<div class="column">
+<a href="http://relaunch.mtv-d.mtvi.com/videos">Full Episodes</a>
+<a href="http://www.mtv.com/shows">Shows A-Z</a>
+<a href="http://relaunch.mtv-d.mtvi.com/news/tv/">Shows News</a>
+</div><div class="column">
+<a href="http://soundtrack.mtv.com/">Music from the Shows</a>
+<a href="http://remotecontrol.mtv.com/casting-calls/">Casting Calls</a>
+</div>
+</div>
+<a href="./mtv-shows_files/mtv-shows.html" class="see_all">See all Shows</a>
+</div>
+</div>
+</div>
+</li>
+-->
+										<li>
+											<a href="http://www.vh1.com/celebrity/" data-link="music">Celebrity<span class="icon-chevron-down"></span></a>
+											<div class="menu_dropdown music">
+												<div>
+													<div class="sidea wide">
+														<div class="links">
+															<div class="column">
+																<a href="http://www.vh1.com/news/celebrity">News</a>
+																<a href="http://www.vh1.com/shows/big_morning_buzz_live/">Big Morning Buzz Live</a>
+																<a href="http://www.vh1.com/shows/the_gossip_table/">The Gossip Table</a>
+															</div>
+															<div class="column">
+																<a href="http://www.vh1.com/news/collection/kardashians/">Kardashians</a>
+																<a href="http://www.vh1.com/news/franchise/15-minutes-of-fame/">15 Minutes of Fame</a>
+																<a href="http://www.vh1.com/news/collection/worst-dressed/">Worse Dressed</a>
+															</div>
+														</div>
+														<a href="http://www.vh1.com/celebrity/" class="btn btn-primary btn-cta more btn-large"><span>See all celebrity buzz</span></a>
+													</div>
+												</div>
+											</div>
+										</li>
+										<li>
+											<a href="http://www.vh1.com/music/" data-link="music">Music<span class="icon-chevron-down"></span></a>
+											<div class="menu_dropdown music">
+												<div>
+													<div class="sidea wide">
+														<div class="links">
+															<div class="column">
+																<a href="http://www.vh1.com/news/music/">News</a>
+																<a href="http://www.vh1.com/events/storytellers/">Storytellers Live</a>
+																<a href="http://www.vh1.com/shows/top_20_countdown/">The 20</a>
+															</div>
+															<div class="column">
+																<a href="http://www.vh1.com/news/franchise/vh1-classic/">VH1 Classic</a>
+																<a href="http://www.vh1.com/news/genre/rb/">VH1 Soul</a>
+																<a href="http://www.vh1.com/music/you_oughta_know/main.jhtml">VH1 You Oughta Know</a>
+															</div>
+															<div class="column">
+																<a href="http://www.vh1.com/artists/">Artists A-Z</a>
+															</div>
+														</div>
+														<a href="http://www.mtv.com/music/" class="btn btn-primary btn-cta more btn-large"><span>See all Music</span></a>
+													</div>
+												</div>
+											</div>
+										</li>
+										<li>
+											<a href="http://www.vh1.com/news/" data-link="news">News<span class="icon-chevron-down"></span></a>
+											<div class="menu_dropdown news">
+												<div>
+													<div class="sidea wide">
+														<div class="links">
+															<div class="column">
+																<a href="http://www.vh1.com/news/">Latest News</a>
+																<a href="http://www.vh1.com/news/music/">Music</a>
+																<a href="http://www.vh1.com/news/celebrity/">Celebrity</a>
+															</div>
+															<div class="column">
+																<a href="http://www.vh1.com/news/shows/">Shows</a>
+															</div>
+														</div>
+														<a href="http://www.vh1.com/news/" class="btn btn-primary btn-cta more btn-large"><span>See all News</span></a>
+													</div>
+												</div>
+											</div>
+
+										</li>
+										<li class="social">
+											<a href="http://www.facebook.com/MTV" target="_blank" class="notriforce">
+												<span class="icon-share-facebook"></span>
+												<span class="screen-reader-text">facebook
+												</span></a>
+											<a href="https://twitter.com/MTV" target="_blank" class="notriforce">
+												<span class="icon-share-twitter"></span>
+												<span class="screen-reader-text">twitter
+												</span></a>
+											<a href="http://mtv.tumblr.com/" target="_blank" class="notriforce">
+												<span class="icon-share-tumblr"></span>
+												<span class="screen-reader-text">tumblr
+												</span></a>
+											<a href="" target="_blank" class="notriforce">
+												<span class="icon-user"></span>
+												<span class="screen-reader-text">user
+												</span></a>
+											<!--<div class="top_flux_userbar">
+<span class="flux4Widget flux4"><div class="userBar sm4_userBar" data-version="4210"><div><div class="authContainer withThumbnail">
+<div class="actionButton loggedOut sm4IconUser"><span class="label">Sign In</span></div>
+</div></div></div></span>
+</div>--> <!-- ** temporarily disabled until an icon is created for this // ryan ** -->
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						<div class="bottom_outer"></div>
+					</div>
+				</div>
+			</div><!-- /navbar -->
+	</body>
+</html>
